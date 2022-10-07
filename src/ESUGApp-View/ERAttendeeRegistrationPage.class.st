@@ -8,50 +8,37 @@ Class {
 	#name : #ERAttendeeRegistrationPage,
 	#superclass : #ERRegisterPage,
 	#instVars : [
-		'contactInfoTab',
 		'regConfInfo',
 		'addInfo',
-		'paymentInfoTab'
+		'isOnDevelopmentMode'
 	],
 	#category : #'ESUGApp-View-Page'
 }
 
 { #category : #actions }
 ERAttendeeRegistrationPage >> addAdditionalInfoTab [
-	addInfo := (self createAdditionalInfoTab: pageController attendee
-						withContent: self) disabled: true;"disabled: false;" cancelCallback: self cancelRegister.
-	^ self
-		addTab: addInfo.
-]
 
-{ #category : #actions }
-ERAttendeeRegistrationPage >> addContactInfoTab [
-	contactInfoTab := (self createContactInfoTab: pageController attendee 
-								withContent: self ) disabled: true;"disabled: false;" cancelCallback: self cancelRegister.
-	^ self
-		addTab: contactInfoTab.
-]
-
-{ #category : #actions }
-ERAttendeeRegistrationPage >> addPaymentInfoTab [
-	paymentInfoTab := (self createPaymentInfoTab: pageController attendee
-								 withContent: self ) disabled: true; cancelCallback: self cancelRegister; buttonsOfTab: [ :html | self renderDoneButtonOn: html ]. 
-	^self
-		addTab: paymentInfoTab.
+	addInfo := (self createAdditionalInfoTab: self controllerAttendee withContent: self) 
+						disabled: true;
+						cancelCallback: self cancelRegister.
+	^ self addTab: addInfo.
 ]
 
 { #category : #actions }
 ERAttendeeRegistrationPage >> addRegisterConferenceInfoTab [
-	regConfInfo := (self createRegConferenceInfoTab: pageController attendee
-							 withContent: self )disabled: true;"disabled: false;" cancelCallback: self cancelRegister.
-	^ self
-		addTab: regConfInfo .
+	"Add conference tab to attendee registration page"
+
+	regConfInfo := (self createRegConferenceInfoTab: self controllerAttendee withContent: self)
+							disabled: true;
+							cancelCallback: self cancelRegister.
+	^ self addTab: regConfInfo .
 ]
 
 { #category : #initialization }
 ERAttendeeRegistrationPage >> initialize [
 	super initialize.
-	title := 'Registration'
+	title := 'Registration'.
+	isOnDevelopmentMode := false.
 ]
 
 { #category : #initialization }
@@ -61,7 +48,7 @@ ERAttendeeRegistrationPage >> initializeTabForms [
 	self addRegisterConferenceInfoTab.
 	self addBillingInfoTab.
 	self addAdditionalInfoTab.
-	self addPaymentInfoTab.
+	self addPaymentInfoTab buttonsOfTab: [ :html | self renderDoneButtonOn: html ].
 	
 	currentTab := basicInfoTab.
 	currentTab updateStateTab: currentTab tabName.
@@ -83,6 +70,21 @@ ERAttendeeRegistrationPage >> saveAddInfo [
 	pageController attendee additionalInformation: 
 	(addInfo contentTab save) model
 	
+]
+
+{ #category : #saving }
+ERAttendeeRegistrationPage >> saveAffilInfo [
+	currentTab := affiliationInfo.
+	pageController attendee affiliationInformation: 
+	(affiliationInfo contentTab save) model
+]
+
+{ #category : #saving }
+ERAttendeeRegistrationPage >> saveBasicInfo [
+
+	currentTab := basicInfoTab.
+	pageController attendee userAccount: 
+	((basicInfoTab contentTab save) model as: ERUserAccount )
 ]
 
 { #category : #saving }
@@ -112,11 +114,13 @@ ERAttendeeRegistrationPage >> saveRegConfInfo [
 
 { #category : #saving }
 ERAttendeeRegistrationPage >> saveRegistration [
+	"Save method to Attendees. Change the isOnDevelopmentMode instance variable if you want to test the application"
+	
 	| user |
 	user := pageController saveAttendee.
 	pageController attendee userAccount: user.
-	"Coment this line in test mode"
-	self sendEmailTo: user.
+	isOnDevelopmentMode
+		ifFalse: [ self sendEmailTo: user ].
 	^ user
 ]
 

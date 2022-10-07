@@ -29,9 +29,17 @@ ERMenuFactory >> availableItemsOfMenu: anObject [
 { #category : #factory }
 ERMenuFactory >> createAdminItem [
 	^ ERItemNav 
-		label: 'Account' 
+		label: 'My Account' 
 		icon: 'person' 
 		callback: (availableItemsOfMenu at: 'admin')
+]
+
+{ #category : #factory }
+ERMenuFactory >> createConferenceItem [
+	^ ERItemNav 
+		label: 'Attendees' 
+		icon: 'record_voice_over' 
+		callback: (availableItemsOfMenu at: 'conference')
 ]
 
 { #category : #factory }
@@ -43,9 +51,17 @@ ERMenuFactory >> createConfigurationItem [
 ]
 
 { #category : #factory }
+ERMenuFactory >> createContactUsItem [
+	^ ERItemNav 
+		label: 'Help' 
+		icon: 'help' 
+		callback: (availableItemsOfMenu at: 'contactUs')
+]
+
+{ #category : #factory }
 ERMenuFactory >> createGroupManagerItem [
 	^ ERItemNav 
-		label: 'Group Registration' 
+		label: 'Group Management' 
 		icon: 'group' 
 		callback: (availableItemsOfMenu at: 'groupRegistration')
 ]
@@ -79,6 +95,14 @@ ERMenuFactory >> createMyRegistrationItem [
 		label: 'My Registration' 
 		icon: 'assignment' 
 		callback: (availableItemsOfMenu at: 'myRegistration')
+]
+
+{ #category : #factory }
+ERMenuFactory >> createPaymentItem [
+	^ ERItemNav 
+		label: 'Invoices' 
+		icon: 'monetization_on' 
+		callback: (availableItemsOfMenu at: 'payment')
 ]
 
 { #category : #factory }

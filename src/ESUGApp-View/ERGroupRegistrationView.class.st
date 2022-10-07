@@ -1,3 +1,8 @@
+"
+Description
+------------
+I am the group registration principal view
+"
 Class {
 	#name : #ERGroupRegistrationView,
 	#superclass : #ERContainer,
@@ -30,6 +35,10 @@ ERGroupRegistrationView >> initializeTabForms [
 					withContent: content
 					container: self);
 	add: (ERMembersView 
+					on: attendee 
+					withContent: content 
+					container: self);
+	add: (ERMembersRegistrationView 
 					on: attendee 
 					withContent: content 
 					container: self).

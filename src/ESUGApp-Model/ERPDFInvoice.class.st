@@ -36,7 +36,7 @@ ERPDFInvoice class >> demoPath: aString [
 { #category : #'as yet unclassified' }
 ERPDFInvoice class >> pdfDocOf: user [
 	<script>
-	| nameFile|
+	| nameFile |
 	nameFile := 'RegistrationInvoice_', user id, '.pdf'.
 	^ self new templateRegistrationInvoice: (self streamNamed: nameFile) of: user
 ]
@@ -176,8 +176,12 @@ ERPDFInvoice >> addInfoESUG: aPage [
 
 { #category : #adding }
 ERPDFInvoice >> addInfoInvoice: pdfPage of: user [
-	| fullname |
-	fullname := ((user firstName, ' ', user lastName) asText copyFrom: 1 to: 20) asString.
+
+	| fullname listOfPosition |
+	user organizationAddress2  
+		ifNotNil: [ listOfPosition := #(70 75 80 85 90 95) ]
+		ifNil: [ listOfPosition := #(70 75 nil 80 85 90) ].
+	fullname := (self encode: user organizationName).
 	pdfPage add: (PDFTextElement new
 		textColor: self colorTitle;
 		font: self fontContent;
@@ -190,34 +194,52 @@ ERPDFInvoice >> addInfoInvoice: pdfPage of: user [
 	add: (PDFFormattedTextElement new
 		textColor: self colorTitle;
 		font: self fontContent;
-		dimension: (168 - fullname size) mm @ 70 mm;
-		from: 0 mm @ 78 mm;
+		dimension: (190-'Bill to:' size-(fullname size*1.9) ) mm @ (listOfPosition at: 1) mm;
+		from: 0 mm @ ((listOfPosition at: 1) + 8) mm;
 		text: 'Bill to:';
 		alignment: (PDFAlignment right));
 	add: (PDFFormattedTextElement new
 		font: self fontContent;
-		dimension: 190 mm @ 70 mm;
-		from: 0 mm @ 78 mm;
+		dimension: 190 mm @ (listOfPosition at: 1) mm;
+		from: 0 mm @ ((listOfPosition at: 1) + 8) mm;
 		text: fullname;
 		alignment: (PDFAlignment right));
 	add: (PDFFormattedTextElement new
 		font: self fontContent;
-		dimension: 190 mm @ 75 mm;
-		from: 0 mm @ 83 mm;
-		text: user organizationName;
+		dimension: 190 mm @ (listOfPosition at: 2) mm;
+		from: 0 mm @ ((listOfPosition at: 2) + 8) mm;
+		text: (self encode: user organizationAddress1);
 		alignment: (PDFAlignment right));
+		
 	add: (PDFFormattedTextElement new
 		font: self fontContent;
-		dimension: 190 mm @ 80 mm;
-		from: 0 mm @ 88 mm;
-		text: user organizationAddress1;
+		dimension: 190 mm @ (listOfPosition at: 4) mm;
+		from: 0 mm @ ((listOfPosition at: 4)+8) mm;
+		text: (self encode: user organizationPostal, ' ', user organizationCity);
 		alignment: (PDFAlignment right));
+	
 	add: (PDFFormattedTextElement new
 		font: self fontContent;
-		dimension: 190 mm @ 85 mm;
-		from: 0 mm @ 93 mm;
-		text: user organizationPostal, ' ', user organizationCity;
-		alignment: (PDFAlignment right))
+		dimension: 190 mm @ (listOfPosition at: 5) mm;
+		from: 0 mm @ ((listOfPosition at: 5) + 8) mm;
+		text: (self encode: user organizationCountry);
+		alignment: (PDFAlignment right)).
+		
+	user organizationAddress2 ifNotNil: [ 
+		pdfPage add:(PDFFormattedTextElement new
+			font: self fontContent;
+			dimension: 190 mm @ (listOfPosition at: 3) mm;
+			from: 0 mm @ ((listOfPosition at: 3) + 8) mm;
+			text: (self encode: user organizationAddress2);
+			alignment: (PDFAlignment right)) ].
+
+	(user affiliationInformation extraInformation) ifNotNil: [ 
+		pdfPage add:(PDFFormattedTextElement new
+			font: self fontContent;
+			dimension: 190 mm @ (listOfPosition at: 6) mm;
+			from: 0 mm @ ((listOfPosition at: 6) + 8) mm;
+			text: (self encode: (user affiliationInformation extraInformation));
+			alignment: (PDFAlignment right)) ]
 ]
 
 { #category : #adding }
@@ -275,12 +297,15 @@ ERPDFInvoice >> addInfoPayment: pdfPage of: user [
 
 { #category : #adding }
 ERPDFInvoice >> addTablePayment: pdfPage of: user [
-	| fontLegend currency |
+	| fontLegend currency showedInfo |
+	showedInfo := 'Full Registration to ESUG22'.
+	(user isKindOf: ERGroup)
+		ifTrue: [ showedInfo := user listAttends size asString, ' registrations to ESUG22' ].
 	currency :=  (128 asCharacter) asString, ' ', (user paymentAmount ifNil: [ 0 ]) asString.
 	fontLegend := PDFTimesFont size: 10pt.
 	pdfPage add: (PDFDataTableWithColumnsCaptionElement new 
 		captions: #('Description' 'Total');
-		data: (Array with: (Array with: 'Full Registration to ESUG19' with: currency));
+		data: (Array with: (Array with: showedInfo with: currency));
 		from: 20 mm @ 115 mm;
 		dimension: 170 mm @ 22 mm;
 		customizationBlock: [ :cell :x :y :data | 
@@ -338,6 +363,13 @@ ERPDFInvoice >> controller: anObject [
 { #category : #adding }
 ERPDFInvoice >> dateToday [
 	^ Date today monthName asString, ' ', Date today dayOfMonth asString, ', ', Date today year asString
+]
+
+{ #category : #adding }
+ERPDFInvoice >> encode: aString [
+	|encoder|
+	encoder := (ZnCharacterEncoder newForEncoding: 'utf16').
+	^ (encoder encodeString: aString) select: [ :e | e > 0 ]
 ]
 
 { #category : #fonts }

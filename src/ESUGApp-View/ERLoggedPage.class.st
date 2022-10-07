@@ -25,7 +25,9 @@ Class {
 		'attendee',
 		'configurationTabs',
 		'proposalTabs',
-		'usersTabs'
+		'usersTabs',
+		'conferenceTabs',
+		'paymentTabs'
 	],
 	#category : #'ESUGApp-View-Page'
 }
@@ -36,14 +38,28 @@ ERLoggedPage >> children [
 ]
 
 { #category : #accessing }
+ERLoggedPage >> conferenceTabs [
+	"Return all conference tabs"
+
+	conferenceTabs ifNil: [
+		conferenceTabs := OrderedCollection new
+			add: (ERAttendeesTab on: attendee withContent: content container: self);
+			yourself.
+			(conferenceTabs at: 1) activate ].
+	^ conferenceTabs
+]
+
+{ #category : #accessing }
 ERLoggedPage >> configurationTabs [ 
 	configurationTabs ifNil: [
-		configurationTabs := OrderedCollection new add: (ERConferenceForm on: attendee withContent: content container: self);
-	add: (ERFeeForm on: attendee withContent: content container: self);
-	add: (ERReductionTicketsTab on: attendee withContent: content container: self);
-	add: (ERInvoicesTab on: attendee withContent: content container: self);
-	add: (ERConfiguration on: attendee withContent: content container: self); yourself.
-	(configurationTabs at: 1) activate].
+		configurationTabs := OrderedCollection new
+			add: (ERConferenceForm on: attendee withContent: content container: self);
+			add: (ERFeeForm on: attendee withContent: content container: self);
+			add: (ERReductionTicketsTab on: attendee withContent: content container: self);
+			add: (ERConferenceOnlineTab on: attendee withContent: content container: self);
+			add: (ERBackupTab on: attendee withContent: content container: self);
+			yourself.
+	(configurationTabs at: 1) activate ].
 	^ configurationTabs
 ]
 
@@ -83,6 +99,10 @@ ERLoggedPage >> itemList [
 			put: [ ERHomeView
 				withContent: content
 				withController: pageController ];
+		at: 'contactUs'
+			put: [ ERContactUsView
+				withContent: content
+				withController: pageController ];
 		at: 'admin'
 			put: [ ERAdminView
 				on: self session user
@@ -97,8 +117,16 @@ ERLoggedPage >> itemList [
 				content: content ];
 		at: 'myRegistration'
 			put: [ ERMyRegistrationView
-				attendee: (pageController conference attendeeFromUser: self session user )
+				attendee: (pageController conference attendeeFromUser: self session user)
 				content: content ];
+		at: 'conference'
+			put: [ ERTabsOfView
+				content: content
+				tabs: self conferenceTabs ];
+		at: 'payment'
+			put: [ ERTabsOfView
+				content: content
+				tabs: self paymentTabs ];
 		at: 'configuration'
 			put: [ ERTabsOfView
 				content: content
@@ -106,7 +134,7 @@ ERLoggedPage >> itemList [
 		at: 'proposal'
 			put: [ ERTabsOfView
 				content: content
-				tabs: self proposalTabs];
+				tabs: self proposalTabs ];
 		at: 'users'
 			put: [ ERTabsOfView
 				content: content
@@ -124,19 +152,23 @@ ERLoggedPage >> listOptionsFor: aMenuFactory [
 	| list |
 	list := OrderedCollection new.
 	list add: aMenuFactory createHomeItem.
+	list add: aMenuFactory createAdminItem.
 	self session user isAttendee
 		ifTrue: [ list add: aMenuFactory createMyRegistrationItem ].
 	self session user isGroupManager
 		ifTrue: [ list add: aMenuFactory createGroupManagerItem ].
 	self session user isAdmin
-		ifTrue: [ list add: aMenuFactory createConfigurationItem.
-			list add: aMenuFactory createUsersItem .
+		ifTrue: [ 
+			list add: aMenuFactory createConfigurationItem.
+			list add: aMenuFactory createUsersItem.
+			list add: aMenuFactory createConferenceItem.
+			list add: aMenuFactory createPaymentItem.
 			list add: aMenuFactory createProposalsItem.
-			list add: aMenuFactory createStatisticsItem ].
+			list add: aMenuFactory createStatisticsItem. ].
 	self session user isStudent
 		ifTrue: [ list add: aMenuFactory createStudentVolunterSearch ].
-	list add: aMenuFactory createAdminItem.
-	list add: aMenuFactory createLogoutItem .
+	list add: aMenuFactory createContactUsItem.
+	list add: aMenuFactory createLogoutItem.
 	^ list
 ]
 
@@ -148,6 +180,15 @@ ERLoggedPage >> navbar: anObject [
 { #category : #accessing }
 ERLoggedPage >> pageController [
 	^ pageController
+]
+
+{ #category : #accessing }
+ERLoggedPage >> paymentTabs [ 
+	paymentTabs ifNil: [
+		paymentTabs := OrderedCollection new
+			add: (ERInvoices on: attendee withContent: content container: self); yourself.
+	(paymentTabs at: 1) activate ].
+	^ paymentTabs
 ]
 
 { #category : #accessing }
@@ -180,9 +221,9 @@ ERLoggedPage >> states [
 { #category : #rendering }
 ERLoggedPage >> usersTabs [ 
 	usersTabs ifNil: [
-		usersTabs := OrderedCollection new add: (ERUsersTab on: attendee withContent: content container: self);
-	add: (ERAttendeesTab on: attendee withContent: content container: self);
-	add: (ERGroupManagersTab on: attendee withContent: content container: self); yourself.
+		usersTabs := OrderedCollection new 
+		add: (ERUsersTab on: attendee withContent: content container: self);
+		add: (ERGroupTab on: attendee withContent: content container: self); yourself.
 	(usersTabs at: 1) activate].
 	^ usersTabs
 ]

@@ -1,3 +1,6 @@
+"
+I render the registration page of group manager user
+"
 Class {
 	#name : #ERGroupRegistrationSummaryView,
 	#superclass : #ERGroupRegistrationTab,
@@ -11,37 +14,49 @@ ERGroupRegistrationSummaryView >> exportInvoice [
 
 { #category : #initialization }
 ERGroupRegistrationSummaryView >> initializeModifyAffiliationForm [
-	formMofidyAffiliation := (ERTittledFormView on: (controller groupManager affiliationInformation readOnly: false)
+
+	formMofidyAffiliation := (ERTittledFormView on: (controller group affiliationInformation readOnly: false)
 								withContent: content) title: 'Billing Information';
-								callback: [:aff | aff readOnly: true.
-									self updateAffiliation: aff on: self group];
-								cancelCallback: [self cancel]; initializeForm. 
+								callback: [ :aff | aff readOnly: true.
+									self updateAffiliation: aff on: self group ];
+								cancelCallback: [ self cancel ]; initializeForm. 
 	content state: formMofidyAffiliation.
 	self updateStateTab: self tabName.
 ]
 
 { #category : #initialization }
 ERGroupRegistrationSummaryView >> initializePaymentForm [
-	^ ( ERPaymentGroupManagerView on: self group
+	^ (ERPaymentGroupManagerView on: self group
 		withContent: content) 
-	updatePayment: [ :aGroup | self payForGroup: aGroup ];
-	cancel: [ self returnToThePreviousState.
-		self updateStateTab: self tabName ];
-	blockForUpdate: [ :aGroup | aGroup save.
-	controller updateGroup: aGroup ]
+		updatePayment: [ :aGroup | self payForGroup: aGroup ];
+		cancel: [
+				self returnToThePreviousState ];
+		blockForUpdate: [ :aGroup | aGroup save.
+			controller updateGroup: aGroup ]
 ]
 
 { #category : #rendering }
 ERGroupRegistrationSummaryView >> modifyAffiliation [
-	self initializeModifyAffiliationForm .
+
+	self initializeModifyAffiliationForm.
+]
+
+{ #category : #rendering }
+ERGroupRegistrationSummaryView >> modifyGroupInformation [
+	(controller group contactInformation copy) readOnly: false.
+	(controller group affiliationInformation copy) readOnly: false.
+	(controller group paymentInformation copy) readOnly: false.
+	self initializeGroupInformationForm: controller group.
 ]
 
 { #category : #actions }
 ERGroupRegistrationSummaryView >> pay [
-	|formUpdatePayment|
+
+	| formUpdatePayment |
+
 	formUpdatePayment := self initializePaymentForm.
 	content state: formUpdatePayment.
-	self updateStateTab: self tabName.
+	"self updateStateTab: self tabName."
 ]
 
 { #category : #actions }
@@ -61,11 +76,11 @@ ERGroupRegistrationSummaryView >> paymentStatus [
 	listAttends isEmpty
 		ifTrue: [ ^ 'No status available. The group has no members ' ]
 		ifFalse: [ 
-	( self group paymentInformation hasPaid )
+	(self group paymentInformation hasPaid)
 	ifTrue: [ ^ 'Payment successfully received.' ]
 	ifFalse: [ ^ 'Payment no registered yet. Amount due: '
-			, (self group paymentAmount ) asString , ' ', 
-			'(s) (NOTE: you could have paid but we could have not registered it yet)' ]].
+			, (self group paymentAmount) asString , ' ', 
+			'(s) (NOTE: you could have paid but we could have not registered it yet)' ] ].
 		
 ]
 
@@ -75,7 +90,7 @@ ERGroupRegistrationSummaryView >> redirectViewForBankTransfer [
 	bankTransferView := ERBankTransferPaymentInfoView
 		on: self group
 		withContent: content.
-	content state: bankTransferView 
+	content state: bankTransferView
 ]
 
 { #category : #rendering }
@@ -94,6 +109,7 @@ ERGroupRegistrationSummaryView >> redirectionPayPAL: aGroup [
 
 { #category : #rendering }
 ERGroupRegistrationSummaryView >> renderContainerOn: html [
+
 	html horizontalRule.
 	self renderOrganizationNameOn: html.
 	self renderPaymentStatus: html.
@@ -112,11 +128,15 @@ ERGroupRegistrationSummaryView >> renderDownloadInvoiceButtonOn: html [
 { #category : #rendering }
 ERGroupRegistrationSummaryView >> renderFormButtonsOn: html [
 	
-	self renderRegisterAttendeeButtonOn: html.
-	self renderRegisterMyselfButtonOn: html.
-	self renderModifyBillingInfoButtonOn: html.
-	self renderPayButtonOn: html.
-	self renderDownloadInvoiceButtonOn: html.
+	html div
+		style: 'display: flex;
+    			justify-content: space-evenly;';
+		with: [
+			self renderRegisterMyselfButtonOn: html.
+			self renderModifyBillingInfoButtonOn: html.
+			self renderPayButtonOn: html.
+			self renderDownloadInvoiceButtonOn: html ].
+	
 ]
 
 { #category : #rendering }
@@ -125,15 +145,16 @@ ERGroupRegistrationSummaryView >> renderModifyBillingInfoButtonOn: html [
 		raised;
 		rippleEffect;
 		id: 'modifyAffiliation';
-		callback: [ self modifyAffiliation ];
-		with: 'Modify Billing Information'
+		disabled: (self group isAbleToPay ifTrue: 'disabled');
+		callback: [ self modifyGroupInformation ];
+		with: 'Modify Group Information'
 ]
 
 { #category : #rendering }
 ERGroupRegistrationSummaryView >> renderOrganizationNameOn: html [
 	html
 		paragraph: [ html strong: 'Organization Name: '.
-			html text: (self groupManager affiliationInformation organizationName) ]
+			html text: (self group affiliationInformation organizationName) ]
 ]
 
 { #category : #rendering }
@@ -144,7 +165,7 @@ ERGroupRegistrationSummaryView >> renderPayButtonOn: html [
 		id: 'pay';
 		disabled: (self group isAbleToPay ifTrue: 'disabled');
 		callback: [ self pay ];
-		with: 'Pay'
+		with: 'Payment information'
 ]
 
 { #category : #rendering }
@@ -152,17 +173,6 @@ ERGroupRegistrationSummaryView >> renderPaymentStatus: html [
 	html
 		paragraph: [ html strong: 'Payment Status: '.
 			html text: self paymentStatus ]
-]
-
-{ #category : #rendering }
-ERGroupRegistrationSummaryView >> renderRegisterAttendeeButtonOn: html [
-	html mdlAnchorButton 
-		raised;
-		rippleEffect;
-		id: 'registerAttendee';
-		disabled: (self group isAbleToPay ifTrue: 'disabled');
-		callback: [ self registerAttendee ];
-		with: 'Register Attendee'
 ]
 
 { #category : #rendering }
@@ -174,7 +184,7 @@ ERGroupRegistrationSummaryView >> renderRegisterMyselfButtonOn: html [
 		id: 'registerMyselfAsAttendee';
 		disabled: (self group isAbleToPay ifTrue: 'disabled');
 		callback: [ self registerMyselfAsAttendee ];
-		with: 'Register Myself as Attendee']
+		with: 'Register Myself as Attendee' ]
 ]
 
 { #category : #accessing }
@@ -189,7 +199,7 @@ ERGroupRegistrationSummaryView >> tabName [
 
 { #category : #accessing }
 ERGroupRegistrationSummaryView >> title [
-	^ 'Group Registration'
+	^ 'Registration'
 ]
 
 { #category : #updating }

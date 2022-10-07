@@ -13,14 +13,14 @@ Instance Variables
 "
 Class {
 	#name : #ERTable,
-	#superclass : #ERComponentFactory,
+	#superclass : #PSSortedTableCollectionComponent,
 	#instVars : [
 		'blockToExecute',
 		'listToRenderButton',
-		'listObject',
 		'levelTotal',
-		'headers',
-		'dictToRenderDownloadButton'
+		'dictToRenderDownloadButton',
+		'validation',
+		'sortingMethod'
 	],
 	#category : #'ESUGApp-Component'
 }
@@ -35,30 +35,19 @@ ERTable >> dictToRenderDownloadButton: aDictionary [
 	dictToRenderDownloadButton := aDictionary 
 ]
 
-{ #category : #accessing }
-ERTable >> headers: anObject [
-	headers := anObject
-]
-
 { #category : #initialization }
 ERTable >> initialize [
 	"blockToExecute listToRenderButton listObject levelTotal headers"
 	super initialize.
 	listToRenderButton := OrderedCollection new.
 	dictToRenderDownloadButton := Dictionary new.
-	listObject := OrderedCollection new.
+	sortingMethod := #().
 	levelTotal := 6.
-	headers := OrderedCollection new.
 ]
 
 { #category : #accessing }
 ERTable >> levelTotal: anObject [
 	levelTotal := anObject
-]
-
-{ #category : #accessing }
-ERTable >> listObject: anObject [
-	listObject := anObject
 ]
 
 { #category : #accessing }
@@ -78,41 +67,19 @@ ERTable >> render: html with: aObject [
 ]
 
 { #category : #rendering }
-ERTable >> renderBody: html [
-	html tableBody: [ 
-		listObject do: [ :object | 
-			html tableRow: [ 
-				self render: html with: object ] ] ]
-]
-
-{ #category : #rendering }
 ERTable >> renderButton: html with: aObject [
 	listToRenderButton
 		do: [ :dataButton | 
 			html mdlAnchorButton colored; rippleEffect;
 				id: (dataButton third value: aObject);
-				onClick: dataButton fifth ;
+				onClick: dataButton fifth;
 				disabled: (dataButton sixth ifTrue: 'disabled');
 				callback: [ dataButton second value: aObject ];
 				icon: dataButton first.
 			html div	class: 'mdl-tooltip'; 
-				attributeAt: 'data-mdl-for' put: (dataButton third value: aObject) ;
-				with: dataButton fourth].
+				attributeAt: 'data-mdl-for' put: (dataButton third value: aObject);
+				with: dataButton fourth ].
 	self renderDownloadButton: html with: aObject
-]
-
-{ #category : #rendering }
-ERTable >> renderContentOn: html [
-	html div style: 'overflow-x:auto;';
-	with: [ 
-		html mdlTable class: 'mdl-shadow--2p';
-		style: 'width:100%;';
-		with: [ 
-			self renderHeaders: html.
-			self renderBody: html. 
-		]
-	].
-	self renderTotalRows: html.
 ]
 
 { #category : #rendering }
@@ -131,17 +98,56 @@ ERTable >> renderDownloadButton: html with: aObject [
 ]
 
 { #category : #rendering }
-ERTable >> renderHeaders: html [
-	html tableHead: [ 
-		html tableRow: [ 
-			headers do: [ :each | 
-				html mdlTableHeading nonNumerical; with: each ] ] ]
-]
-
-{ #category : #rendering }
 ERTable >> renderTotalRows: html [
 	html heading
 		level: levelTotal;
 		with: [ html strong: 'Total: '.
-			html text: listObject size asString ]
+			html text: rows size asString ]
+]
+
+{ #category : #sorting }
+ERTable >> sortCollectionwith: aSelector OnRowIndex: aRowIndex [
+	| method cellValue anotherCellValue |
+	
+	self filteredRows
+		sort: [ :cell :anotherCell |
+			method := (self sortingMethod at: aRowIndex).
+			cellValue := method value: cell.
+			anotherCellValue := method value: anotherCell.
+			[
+				cellValue
+				perform: aSelector
+				with: anotherCellValue ]
+				on: MessageNotUnderstood
+				do: [ true ] ]
+]
+
+{ #category : #accessing }
+ERTable >> sortingMethod [
+
+	^ sortingMethod
+]
+
+{ #category : #accessing }
+ERTable >> sortingMethod: aCollection [
+
+	sortingMethod := aCollection
+]
+
+{ #category : #'rendering-searching' }
+ERTable >> validateFilterOf: aObject [
+
+	^ self validation value: aObject value: self searchingText
+]
+
+{ #category : #accessing }
+ERTable >> validation [
+
+	^ validation
+]
+
+{ #category : #accessing }
+ERTable >> validation: aObject [
+
+	validation := aObject
 ]

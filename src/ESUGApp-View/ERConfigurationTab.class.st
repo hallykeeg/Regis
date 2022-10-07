@@ -1,3 +1,9 @@
+"
+Description
+--------------------
+
+I am the configuration tab to configure esug app
+"
 Class {
 	#name : #ERConfigurationTab,
 	#superclass : #ERContainerTab,
@@ -46,6 +52,14 @@ ERConfigurationTab >> initialize [
 { #category : #initialization }
 ERConfigurationTab >> initializeController [
 	controller := ERConfigurationController new attendee: attendee
+]
+
+{ #category : #initialization }
+ERConfigurationTab >> initializeGroupInformationForm: aGroup [
+
+	callback := [ self updateGroupInformation: aGroup ].
+	self initializeGroupInformationFormFor: aGroup.
+	self updateStateTab: self tabName.
 ]
 
 { #category : #rendering }

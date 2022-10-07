@@ -6,10 +6,12 @@ I am an abstract class for registered objects in conference
 "
 Class {
 	#name : #ERRegisteredObject,
-	#superclass : #SDActiveRecord,
+	#superclass : #ESUGActiveRecord,
 	#instVars : [
 		'paymentInformation',
-		'encodedInvoice'
+		'encodedInvoice',
+		'contactInformation',
+		'affiliationInformation'
 	],
 	#category : #'ESUGApp-Model-Magritte'
 }
@@ -19,6 +21,30 @@ ERRegisteredObject >> addPayPalComissionifApply: payPalComission [
 	(paymentInformation paymentTypeIsCreditCard)
 	ifTrue: [ paymentInformation paymentAmount: 
 					(paymentInformation paymentAmount + payPalComission )]
+]
+
+{ #category : #accessing }
+ERRegisteredObject >> affiliationInformation [
+
+	^ affiliationInformation
+]
+
+{ #category : #accessing }
+ERRegisteredObject >> affiliationInformation: anObject [
+
+	affiliationInformation := anObject
+]
+
+{ #category : #accessing }
+ERRegisteredObject >> contactInformation [
+
+	^ contactInformation
+]
+
+{ #category : #accessing }
+ERRegisteredObject >> contactInformation: anObject [
+
+	contactInformation := anObject
 ]
 
 { #category : #accessing }
@@ -45,6 +71,8 @@ ERRegisteredObject >> idGroup [
 ERRegisteredObject >> initialize [
 	super initialize .
 	paymentInformation := ERPaymentInformation new.
+	contactInformation := ERContactInformation new.
+	affiliationInformation := ERBillingInformation new.
 ]
 
 { #category : #accessing }

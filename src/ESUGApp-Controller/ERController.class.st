@@ -25,6 +25,7 @@ ERController >> addAttendee: anAttendee [
 	| anAttendeeSaved |
 	anAttendee userAccount encryptMyPassword.
 	anAttendeeSaved := conference addAttendee: anAttendee.
+	conference save.
 	self notifyAllObservers.
 	^ anAttendeeSaved
 ]
@@ -75,7 +76,9 @@ ERController >> codingZipFile: aString with: nameSubDirectory [
 	zip addDirectory: subDir.
 	zipFile := aString asFileReference, 'zip'.
 	self cleanZip: zip with: zipFile subDir: subDir.
-	nameSubDirectory asFileReference files do: [ :aFile | zip addFile: aFile path asFileReference as: aString, '/', (aFile path at: 2) ].
+	nameSubDirectory asFileReference files do: [ :aFile | zip 
+		addFile: aFile path 
+			asFileReference as: aString, '/', (aFile path at: 2) ].
 	zip writeToFileNamed: zipFile fullName.
 	codingZipFile := self encodeFiletoBase64: zipFile.
 	self cleanZip: zip with: zipFile subDir: subDir.
@@ -101,8 +104,9 @@ ERController >> deleteAward: anAward [
 
 { #category : #deleting }
 ERController >> deleteTalk: aTalk [
+
 	conference deleteTalk: aTalk.
-	self notifyAllObservers 
+	self notifyAllObservers
 ]
 
 { #category : #encoding }
@@ -161,12 +165,15 @@ ERController >> sendResetPasswordTo: aString [
 
 { #category : #updating }
 ERController >> stateUpdatePaidAttendee: anAttendee with: aBoolean [
-	anAttendee stateUpdatePaidWith: aBoolean actions: { [ :att | self updateGroup: att ] . [ :att | self updateAttendee: att ] }
+
+	anAttendee stateUpdatePaidWith: aBoolean actions: { 
+		[ :att | self updatePaymentGroup: att ] . [ :att | self updatePaymentAttendee: att ] }.
+	self notifyAllObservers
 ]
 
 { #category : #updating }
 ERController >> updateAffiliation: aff on: aGroup [
-	aGroup groupManager affiliationInformation: aff.
+	aGroup affiliationInformation: aff.
 	aGroup save.
 	self notifyAllObservers 
 ]
@@ -174,10 +181,11 @@ ERController >> updateAffiliation: aff on: aGroup [
 { #category : #updating }
 ERController >> updateAttendee: anAttendee [
 	self verifyIfTheTicketIsStillAvailable: anAttendee.
+	self verifyIfAttendeeHasADaysOfConference: anAttendee.
 	self updatePaymentRate: anAttendee.
 	anAttendee save.
 	anAttendee idGroup isNotNil ifTrue: [ self updateGroup: (conference getGroupOfAttendee: anAttendee) ].
-	self notifyAllObservers .
+	self notifyAllObservers.
 	^ anAttendee 
 ]
 
@@ -190,9 +198,29 @@ ERController >> updateAward: anAward [
 
 { #category : #updating }
 ERController >> updateGroup: aGroup [
+	"Update group information with all atendees"
+
 	self updatePaymentRateForGroup: aGroup.
 	aGroup updateHasPaidOfAll.
 	self notifyAllObservers.
+	^ aGroup save.
+]
+
+{ #category : #updating }
+ERController >> updatePaymentAttendee: anAttendee [
+	self verifyIfTheTicketIsStillAvailable: anAttendee.
+	self updatePaymentRate: anAttendee.
+	anAttendee save.
+	anAttendee idGroup isNotNil ifTrue: [ self updatePaymentGroup: (conference getGroupOfAttendee: anAttendee) ].
+	^ anAttendee 
+]
+
+{ #category : #updating }
+ERController >> updatePaymentGroup: aGroup [
+	"Update group information with all atendees"
+
+	self updatePaymentRateForGroup: aGroup.
+	aGroup updateHasPaidOfAll.
 	^ aGroup save.
 ]
 
@@ -206,7 +234,7 @@ ERController >> updatePaymentRate: anAttendee [
 
 { #category : #updating }
 ERController >> updatePaymentRateForGroup: aGroup [ 
-	aGroup updatePaymentRateWith: [:amount | conference addPayPalComissionOn: amount]
+	aGroup updatePaymentRateWith: [ :amount | conference addPayPalComissionOn: amount ]
 ]
 
 { #category : #updating }
@@ -218,10 +246,10 @@ ERController >> updateTalk: aTalk [
 
 { #category : #updating }
 ERController >> updateUser: anUser [
-	[conference validateIfEmailIsAlreadyRegistered: anUser.
+	[ conference validateIfEmailIsAlreadyRegistered: anUser.
 	anUser save.
-	self notifyAllObservers .
-	^ anUser]
+	self notifyAllObservers.
+	^ anUser ]
 	on: ERException 
 	do: [ :exp | ^ exp signal ]
 ]
@@ -233,17 +261,29 @@ ERController >> validateNewPassword: aString1 with: aString2 [
 
 { #category : #validations }
 ERController >> validateRegister: anAttendee [
+
 	conference validateIfEmailIsAlreadyRegistered: anAttendee userAccount.
 	self validateNewPassword: anAttendee userAccount password 
-	with: anAttendee userAccount confirmPassword.
-	anAttendee userAccount isAttendee ifFalse: [ ^ self ].
+		with: anAttendee userAccount confirmPassword.
+	anAttendee userAccount isAttendee
+		ifFalse: [ ^ self ]
+		ifTrue: [ self verifyIfAttendeeHasADaysOfConference: anAttendee ].
 	self verifyIfTheTicketIsStillAvailable: anAttendee.
 	self updatePaymentRate: anAttendee
 ]
 
 { #category : #action }
+ERController >> verifyIfAttendeeHasADaysOfConference: anAttendee [
+	| daysOfConference totalDays |
+
+	daysOfConference := anAttendee conferenceInformation attendance.
+	totalDays := daysOfConference select: [ :day | day value = true ].
+	totalDays isEmpty ifTrue: [ ERException noDaysOfConference signal ]
+]
+
+{ #category : #action }
 ERController >> verifyIfTheTicketIsStillAvailable: anAttendee [
-	|coupon|
+	| coupon |
 	coupon := anAttendee paymentInformation coupon.
 	(coupon isNil or: [ coupon isEmpty ]) ifFalse: [
 		self conference reductionTickets 

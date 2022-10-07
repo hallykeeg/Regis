@@ -3,6 +3,10 @@ Description
 --------------------
 
 I am a controller for configuration of conference, this is only use for admin user.
+
+I can:
+ 
+	- configure the application
 "
 Class {
 	#name : #ERConfigurationController,
@@ -12,89 +16,36 @@ Class {
 
 { #category : #adding }
 ERConfigurationController >> addReductionTicketToConference: ticketRegistered [
-	conference addReductionTicket: ticketRegistered.
-	self notifyAllObservers 
-]
+	"Add reduction ticker to conference and create a backup"
 
-{ #category : #adding }
-ERConfigurationController >> addUser: anUser [
-	(conference findUserByEmail: anUser email)
-		ifNil: [ | userSaved |
-			userSaved := anUser save.
-			conference addUser: userSaved.
-			self notifyAllObservers .
-			^ userSaved ]
+	conference addReductionTicket: ticketRegistered.
+	self notifyAllObservers
 ]
 
 { #category : #action }
 ERConfigurationController >> closeRegistration [
+
 	self conference closeRegistration.
-	self notifyAllObservers
-]
-
-{ #category : #updating }
-ERConfigurationController >> convertToStudentVolunterThis: anAttendee [
-	anAttendee convertToStudentVolunter.
-	self notifyAllObservers
-]
-
-{ #category : #deleting }
-ERConfigurationController >> deleteDependencesOfAttendee: anUser [
-	|att|
-	anUser isAttendee ifFalse: [ ^ self ].
-	att := conference attendeeFromUser: anUser.
-	conference deleteAttendeeFromGroupAndConference: att
-]
-
-{ #category : #deleting }
-ERConfigurationController >> deleteDependencesOfGroupManager: anUser [
-	anUser isGroupManager ifTrue: [ |group|
-		group := conference groupOfUser: anUser.
-		self deleteGroup: group
-		 ]
-]
-
-{ #category : #deleting }
-ERConfigurationController >> deleteGroup: aGroup [
-	|attendees|
-	attendees := aGroup listAttends deepCopy.
-	attendees do: [ :each | self deleteAttendee: (ERAttendee find: [:att | att = each]) ].
-	conference deleteUser: aGroup groupManager userAccount.
-	(self conference groups)
-		removeAllSuchThat: [ :each | aGroup id = each id ].
-	aGroup delete.
 	self notifyAllObservers
 ]
 
 { #category : #deleting }
 ERConfigurationController >> deleteReductionTicket: aReductionTicket [
-	(conference attendeesForATicket: aReductionTicket ticketId) isNotEmpty
-		ifTrue: [ ERException deletionOfTicketNotValid signal ].
+	"Remove a reduction ticket and create a backup"
+
+	(conference attendeesForATicket: aReductionTicket ticketId) 
+		isNotEmpty
+			ifTrue: [ ERException deletionOfTicketNotValid signal ].
 	conference reductionTickets
 		removeAllSuchThat: [ :each | each ticketId = aReductionTicket ticketId ].
 	aReductionTicket delete.
-	self notifyAllObservers 
-]
-
-{ #category : #deleting }
-ERConfigurationController >> deleteStudentVolunterRoleFrom: anAttendee [
-	anAttendee removeStudentVolunterRole.
 	self notifyAllObservers
-]
-
-{ #category : #deleting }
-ERConfigurationController >> deleteUser: anUser [
-	"The admin user can not be deleted"
-	anUser isAdmin ifFalse: [ 
-		self deleteDependencesOfAttendee: anUser.
-		self deleteDependencesOfGroupManager: anUser.
-		conference deleteUser: anUser.
-		self notifyAllObservers ]
-	ifTrue: [ ERException adminUserDoesNotDelete signal ]
 ]
 
 { #category : #updating }
 ERConfigurationController >> modifyTicket: aTicket [
+	"Modify information of ticket and create a backup"
+
 	conference reductionTicketAlreadyExist: aTicket.
 	aTicket save.
 	self notifyAllObservers
@@ -108,9 +59,11 @@ ERConfigurationController >> openRegistration [
 
 { #category : #saving }
 ERConfigurationController >> saveConferenceWithConfiguration: configuration emailConfiguration: emailConfig organizer: organizer [
-	self conference configuration:configuration.
-	self conference configuration emailConfiguration: emailConfig .
-	self conference configuration organizer: organizer .
+	"Save conference configuration and create backup"
+
+	self conference configuration: configuration.
+	self conference configuration emailConfiguration: emailConfig.
+	self conference configuration organizer: organizer.
 	self conference save.
 	self notifyAllObservers 
 ]
@@ -126,24 +79,27 @@ ERConfigurationController >> saveFileOn: aFile withStream: stream [
 
 { #category : #updating }
 ERConfigurationController >> updateFee: aFee [
+	"Update a fee and create a backup file"
+
 	aFee save.
 	self notifyAllObservers.
 	^ aFee
-	
 ]
 
 { #category : #validations }
 ERConfigurationController >> validateConferenceConfiguration: configuration [
-	configuration dateFrom asDate < configuration dateTo asDate
-	ifFalse: [ ^ ERException invalidEsugDates signal ]
+	"validate conference information"
 	
+	configuration dateFrom asDate < configuration dateTo asDate
+		ifFalse: [ ^ ERException invalidEsugDates signal ]
 ]
 
 { #category : #validations }
 ERConfigurationController >> validateEmailConfiguration: emailConfiguration [
-	
+	"Need implementation"
 ]
 
 { #category : #validations }
 ERConfigurationController >> validateOrganizerConfiguration: organizer [
+	"Need implementation"
 ]

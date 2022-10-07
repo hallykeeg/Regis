@@ -1,4 +1,4 @@
-# Regis [![master branch:](https://travis-ci.org/Lin777/ESUGConfRegistrationApp.svg?branch=master)](https://travis-ci.org/Lin777/ESUGConfRegistrationApp/branches)
+# Regis [![master branch:](https://travis-ci.org/Lin777/Regis.svg?branch=master)](https://travis-ci.org/Lin777/ESUGConfRegistrationApp/branches)
 
 Regis is Web application for managing ESUG conference registrations.
 
@@ -22,7 +22,7 @@ To load the ESUGApp package into the Pharo image:
 ```Smalltalk
 Metacello new
  baseline:'ESUGApp';
- repository: 'github://Lin777/ESUGConfRegistrationApp:master/src';
+ repository: 'github://Lin777/Regis:master/src';
  load.
  
 #ESUGSetUp asClass start
@@ -51,3 +51,7 @@ All the users generated automatically have as password: 12345678
 ## Deploy with Docker
 
 See documentation in [Docker/README.md](Docker/README.md)
+
+## FAQ
+
+See documentation in [FAQ/README.md](FAQ/README.md)

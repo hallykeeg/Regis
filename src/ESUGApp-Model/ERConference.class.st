@@ -18,10 +18,11 @@ configuration:
 active:                 <Boolean> is the state of conference (active for register in conference)
 invoiceNumber:          <Number> is an incremental number of invoices of conference
 configurationOfHomePage: <ERConfigurationOfHomePage> object to update with html the principal page of page (principal page of logged user)
+emailHelp: <String> Email if you want help in your registration
 "
 Class {
 	#name : #ERConference,
-	#superclass : #SDActiveRecord,
+	#superclass : #ESUGActiveRecord,
 	#instVars : [
 		'attends',
 		'fee',
@@ -54,9 +55,9 @@ ERConference >> addAttendee: anAttendee [
 	| anAttendeeSaved userSaved |
 	self validateIfEmailIsAlreadyRegistered: anAttendee userAccount.
 	userSaved := anAttendee userAccount save.
-	self addUser: userSaved.
+	self addNewUser: userSaved.
 	anAttendeeSaved := (anAttendee userAccount: userSaved) save.
-	attends add: anAttendeeSaved.
+	self addNewAttendee: anAttendeeSaved.
 	self save.
 	^ anAttendeeSaved
 ]
@@ -64,6 +65,16 @@ ERConference >> addAttendee: anAttendee [
 { #category : #adding }
 ERConference >> addGroup: aGroup [
 	groups add: aGroup 
+]
+
+{ #category : #adding }
+ERConference >> addNewAttendee: anAttendee [
+	attends add: anAttendee
+]
+
+{ #category : #adding }
+ERConference >> addNewUser: anUser [
+	users add: anUser 
 ]
 
 { #category : #adding }
@@ -91,11 +102,6 @@ ERConference >> addSubmittedTalk: aSubmittedTalk [
 	aSubmittedTalk submittionDate: Date today.
 	submittedTalks add: aSubmittedTalk save.
 	self save.
-]
-
-{ #category : #adding }
-ERConference >> addUser: anUser [
-	users add: anUser 
 ]
 
 { #category : #search }
@@ -136,6 +142,14 @@ ERConference >> attends: anObject [
 	attends := anObject
 ]
 
+{ #category : #exporting }
+ERConference >> booleanToString: aBoolean [
+
+	aBoolean
+		ifTrue: [ ^ 'Yes' ]
+		ifFalse: [ ^ 'No' ]
+]
+
 { #category : #action }
 ERConference >> closeRegistration [
 	self configuration openRegistration: false.
@@ -170,7 +184,7 @@ ERConference >> configurationOfHomePage: anObject [
 { #category : #action }
 ERConference >> costPerExtraPerson: anAttendee [
 	anAttendee conferenceInformation addPersonToSocialDinner ifFalse: [ ^ 0 ]
-	ifTrue: [ ^ fee extraPersonSD asNumber]
+	ifTrue: [ ^ fee extraPersonSD asNumber ]
 ]
 
 { #category : #action }
@@ -189,10 +203,15 @@ ERConference >> deleteAttendee: anAttendee [
 
 { #category : #deleting }
 ERConference >> deleteAttendeeFromGroupAndConference: anAttendee [
-	anAttendee idGroup isNotNil ifTrue: [ 
-		|group|
-		group := self getGroupOfAttendee: anAttendee.
-		group deleteAttendee: anAttendee; save].
+
+	self deleteTalksCreatedByAttendee: anAttendee.
+	self deleteAwardsCreatedByAttendee: anAttendee.
+	anAttendee idGroup isNotNil
+		ifTrue: [ | group |
+			group := self getGroupOfAttendee: anAttendee.
+			group
+				deleteAttendee: anAttendee;
+				save ].
 	self deleteAttendee: anAttendee.
 	anAttendee delete.
 	self save
@@ -200,14 +219,34 @@ ERConference >> deleteAttendeeFromGroupAndConference: anAttendee [
 
 { #category : #deleting }
 ERConference >> deleteAward: anAward [
+
 	self submittedAwards removeAllSuchThat: [ :each | anAward id = each id ].
 	self save.
+	anAward delete
+]
+
+{ #category : #deleting }
+ERConference >> deleteAwardsCreatedByAttendee: anAttendee [
+	| attendeeAwards |
+	attendeeAwards := self submittedAwards
+		select: [ :talks | talks submitter id = anAttendee id ].
+	attendeeAwards do: [ :award | self deleteAward: award ]
 ]
 
 { #category : #deleting }
 ERConference >> deleteTalk: aTalk [
+
 	self submittedTalks removeAllSuchThat: [ :each | aTalk id = each id ].
 	self save.
+	aTalk delete
+]
+
+{ #category : #deleting }
+ERConference >> deleteTalksCreatedByAttendee: anAttendee [
+	| attendeeTalks |
+	attendeeTalks := self submittedTalks
+		select: [ :talks | talks submitter id = anAttendee id ].
+	attendeeTalks do: [ :talk | self deleteTalk: talk ]
 ]
 
 { #category : #deleting }
@@ -267,9 +306,23 @@ ERConference >> exportAttends: fileName [
 							each userAccount lastName.
 							each userAccount email.
 							each contactInformation country.
-							each affiliationInformation organizationName} ].
+							each affiliationInformation organizationName.
+							each conferenceInformation gender.
+							self paymentToString: each paymentInformation hasPaid.
+							self booleanToString: (each conferenceInformation attendance at: 'monday').
+							self booleanToString: (each conferenceInformation attendance at: 'tuesday').
+							self booleanToString: (each conferenceInformation attendance at: 'wednesday').
+							self booleanToString: (each conferenceInformation attendance at: 'thursday').
+							self booleanToString: (each conferenceInformation attendance at: 'friday').
+							each conferenceInformation tshirtSize.
+							each conferenceInformation foodPreference.
+							self booleanToString: each conferenceInformation attendSocialEvent.
+							self booleanToString: each conferenceInformation addedToMainList.
+							self booleanToString: each conferenceInformation addPersonToSocialDinner.
+							(each conferenceInformation addPersonToSocialDinner)
+								ifTrue: [ each conferenceInformation personAddedFoodPreference. ] } ].
 			neoWriter close ].
-	^ cvs
+		^ cvs
 ]
 
 { #category : #exporting }
@@ -288,13 +341,28 @@ ERConference >> exportAttends: list in: fileName [
 							each userAccount lastName.
 							each userAccount email.
 							each contactInformation country.
-							each affiliationInformation organizationName} ].
+							each affiliationInformation organizationName.
+							each conferenceInformation gender.
+							self paymentToString: each paymentInformation hasPaid.
+							self booleanToString: (each conferenceInformation attendance at: 'monday').
+							self booleanToString: (each conferenceInformation attendance at: 'tuesday').
+							self booleanToString: (each conferenceInformation attendance at: 'wednesday').
+							self booleanToString: (each conferenceInformation attendance at: 'thursday').
+							self booleanToString: (each conferenceInformation attendance at: 'friday').
+							each conferenceInformation tshirtSize.
+							each conferenceInformation foodPreference.
+							self booleanToString: each conferenceInformation attendSocialEvent.
+							self booleanToString: each conferenceInformation addedToMainList.
+							self booleanToString: each conferenceInformation addPersonToSocialDinner.
+							(each conferenceInformation addPersonToSocialDinner)
+								ifTrue: [ each conferenceInformation personAddedFoodPreference. ] } ].
 			neoWriter close ].
 	^ cvs
 ]
 
 { #category : #exporting }
 ERConference >> exportAwards: fileName [
+
 	|  cvs |
 	cvs := String
 		streamContents: [ :out | 
@@ -306,8 +374,16 @@ ERConference >> exportAwards: fileName [
 					neoWriter
 						nextPut:
 					{each nameAward.
-					each submitter userAccount email}].
-
+					each submitter userAccount firstName, ' ', each submitter userAccount lastName.
+					each otherDevelopers.
+					each affiliation.
+					each country.
+					each smalltalkDialect.
+					each keywords .
+					each licence.
+					each downloadUrl .
+					each demoUrl.
+					each submittionDate } ].
 			neoWriter close ].
 	^ cvs
 ]
@@ -325,15 +401,16 @@ ERConference >> exportGroupManagers: fileName [
 					neoWriter
 						nextPut:
 							{each paymentInformation invoiceNumber.
-							each groupManager userAccount firstName.
-							each groupManager userAccount lastName.
+							(each groupManager userAccount firstName, ' ', each groupManager userAccount lastName).
 							each groupManager userAccount email.
-							each groupManager affiliationInformation organizationName.
-							each groupManager affiliationInformation organizationAddrees1.
-							each groupManager affiliationInformation organizationCity.
-							each groupManager affiliationInformation organizationCountry.
-							each groupManager affiliationInformation organizationPostal.
-							each groupManager affiliationInformation membershipType} ].
+							each affiliationInformation organizationName.
+							each affiliationInformation organizationAddrees1.
+							each affiliationInformation organizationCity.
+							each affiliationInformation organizationCountry.
+							each affiliationInformation organizationPostal.
+							each affiliationInformation membershipType.
+							each listAttends size.
+							self paymentToString: each paymentInformation hasPaid } ].
 				neoWriter close ].
 	^ cvs
 ]
@@ -349,9 +426,14 @@ ERConference >> exportTalks: fileName [
 			self submittedTalks
 				do: [ :each | neoWriter 
 				nextPut:
-					{each name.
+					{ each title.
+					(each submitter userAccount firstName, ' ', each submitter userAccount lastName).
 					each submitter userAccount email.
-					each presentation} ].
+					each authorsWithoutSubmitter.
+					each description.
+					each bio.
+					each presentation ifNil: [ 'No presentation' ].
+					each submittionDate } ].
 			neoWriter close ].
 	^ cvs
 ]
@@ -372,8 +454,7 @@ ERConference >> exportUsers: fileName [
 							each firstName.
 							each lastName.
 							each email.
-							each password.
-							each rolesAsString} ].
+							self roleStringFrom: (each rolesAsString)} ].
 				neoWriter close ].
 	^ cvs
 ]
@@ -389,26 +470,26 @@ ERConference >> fee: anObject [
 ]
 
 { #category : #filtering }
-ERConference >> filterAttendsBy: aSymbol beginsWith: aString [
+ERConference >> filterAttendsBy: aSymbol matchesWith: aString [
 	^ self attends select: 
 		[ :att | (att userAccount perform: aSymbol) asLowercase 
-		beginsWith: aString asLowercase ]
+		includesSubstring: aString asLowercase ]
 
 ]
 
 { #category : #filtering }
 ERConference >> filterAttendsByEmailWith: aString [
-	^ self filterAttendsBy: #email beginsWith: aString
+	^ self filterAttendsBy: #email matchesWith: aString
 ]
 
 { #category : #filtering }
 ERConference >> filterAttendsByFirstNameWith: aString [
-	^ self filterAttendsBy: #firstName beginsWith: aString
+	^ self filterAttendsBy: #firstName matchesWith: aString
 ]
 
 { #category : #filtering }
 ERConference >> filterAttendsByLastNameWith: aString [
-	^ self filterAttendsBy: #lastName beginsWith: aString
+	^ self filterAttendsBy: #lastName matchesWith: aString
 ]
 
 { #category : #search }
@@ -453,43 +534,44 @@ ERConference >> groups: anObject [
 
 { #category : #header }
 ERConference >> headerAttendee [
-	^ #('InvoiceNumber' 'FirstName' 'LastName' 'Email' 'Country' 'Org. Name')
+	^ #('InvoiceNumber' 'FirstName' 'LastName' 'Email' 'Country' 'Org. Name' 'genre' 'Payment Status' 'Mon' 'Tue' 'Wed' 'Thu' 'Fri' 'T shirt size' 'Food preference' 'Social Event' 'Added To Mailing List' 'Add person' 'Added Person food preference')
 ]
 
 { #category : #header }
 ERConference >> headerGroups [
-	^ #('Invoice Number' 'First Name' 'Last Name' 'Email' 'Org. Name' 'Org. Address1' 
-	'Org. City' 'Org. Country' 'Org. Postal' 'Org. Membership')
+	^ #('Invoice Number' 'Group Manager Name' 'Group Manager Email' 'Org. Name' 'Org. Address1' 
+	'Org. City' 'Org. Country' 'Org. Postal' 'Org. Membership' 'Attendees Registered' 'Payment Status')
 ]
 
 { #category : #header }
 ERConference >> headerTalks [
-	^ #('Name' 'Submitted By' 'Uploaded File')
+	^ #('Talk title' 'Submitted By' 'Submitter Email' 'Other authors' 'Abstract' 'Bio' 'Uploaded File' 'Submittion Date')
 ]
 
 { #category : #header }
 ERConference >> headerUser [
-	^ #('id' 'firstName' 'lastName' 'email' 'password' 'role')
+	^ #('Id' 'First Name' 'Last Name' 'Email' 'User Role')
 ]
 
 { #category : #header }
 ERConference >> headersParticipantsToLunches [
-	^ #('Day' 'Normal' 'Vegetarian' 'Vegan' 'Total')	
+	^	{ 'Day' . 'Normal' . 'Vegetarian' . 'Vegan' . 'Total' }
 ]
 
 { #category : #header }
 ERConference >> headersParticipantsToSocialDinner [ 
-	^ #( 'Normal' 'Vegetarian' 'Vegan' 'Total')	
+	^ { 'Normal' . 'Vegetarian' . 'Vegan' . 'Total' }	
 ]
 
 { #category : #header }
 ERConference >> headersShirtsStatistics [
-	^ #('Size of the shirt' 'Female' 'Male' 'Total')
+	^ { 'Size of the shirt' . 'Female' . 'Male' . 'Total' }
 ]
 
 { #category : #header }
 ERConference >> hearderAwards [
-	^ #('Name' 'Submitted by')
+	^ #('Award Name' 'Submitted by' 'Other Developers' 'Affiliation' 'Country' 'Dialect' 'Keywords'
+	'Licence' 'Download Url' 'Demo Url' 'Submittion Date')
 ]
 
 { #category : #action }
@@ -561,6 +643,14 @@ ERConference >> paymentAmountFor: anAttendee [
 	^ amount
 ]
 
+{ #category : #exporting }
+ERConference >> paymentToString: aBoolean [
+
+	aBoolean
+		ifTrue: [ ^ 'paid' ]
+		ifFalse: [ ^ 'unpaid' ]
+]
+
 { #category : #action }
 ERConference >> priceAccordingToAttendanceDaysOf: anAttendee [
 	|daysOfAssistance |
@@ -611,6 +701,24 @@ ERConference >> reductionTickets [
 { #category : #accessing }
 ERConference >> reductionTickets: anObject [
 	reductionTickets := anObject
+]
+
+{ #category : #actions }
+ERConference >> roleStringFrom: aString [
+
+	(aString = 'groupManager')
+		ifTrue: [ ^ 'Group Manager' ].
+	(aString = 'admin')
+		ifTrue: [ ^ 'Administrator' ].
+	(aString = 'attendee')
+		ifTrue: [ ^ 'Attendee' ].
+	(aString = 'studentVolunter')
+		ifTrue: [ ^ 'Student Volunteer' ].
+	(aString = 'attendeegroupManager')
+		ifTrue: [ ^ 'Attendee and Group Manager' ].
+	(aString = 'attendeestudentVolunter')
+		ifTrue: [ ^ 'Attendee and Student Volunteer' ]
+		ifFalse: [ ^ aString ]
 ]
 
 { #category : #action }
@@ -713,11 +821,12 @@ ERConference >> users: anObject [
 
 { #category : #validations }
 ERConference >> validateIfEmailIsAlreadyRegistered: anUser [
+
 	self users
 		do: [ :each | 
 			each email = anUser email
-				ifTrue: [each = anUser ifFalse:[
-					ERException emailAlreadyRegistered signal ] ]].
+				ifTrue: [ each = anUser ifFalse: [
+					ERException emailAlreadyRegistered signal ] ] ].
 ]
 
 { #category : #validations }
@@ -726,7 +835,7 @@ ERConference >> validateIfTicketIDIsAlreadyRegistered: aTicket [
 		do: [ :each | 
 			each ticketId = aTicket ticketId
 				ifTrue: [ each = aTicket ifFalse: [
-					ERException ticketIdAlreadyRegistered signal ]]]
+					ERException ticketIdAlreadyRegistered signal ] ] ]
 ]
 
 { #category : #validations }

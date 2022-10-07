@@ -1,3 +1,9 @@
+"
+Description
+----------------
+
+I am the Home View of a registrated attendee
+"
 Class {
 	#name : #ERMyRegistrationSummaryTab,
 	#superclass : #ERMyRegistrationTab,
@@ -6,33 +12,37 @@ Class {
 
 { #category : #actions }
 ERMyRegistrationSummaryTab >> encodedInvoice [
+	| group |
 	attendee idGroup isNotNil
-	ifTrue: [ |group|
-		group := controller conference getGroupOfAttendee: attendee.
-		^ group encodedInvoice ]
-	ifFalse: [ ^ attendee encodedInvoice] 
+		ifTrue: [ 
+			group := controller conference getGroupOfAttendee: attendee.
+				^ group encodedInvoice ]
+		ifFalse: [ ^ attendee encodedInvoice ] 
 ]
 
 { #category : #actions }
 ERMyRegistrationSummaryTab >> exportInvoice [
-	|invoice|
+
+	| invoice |
 	invoice :=self managerOfInvoice.
 	self exportInvoiceOf: invoice.
 ]
 
 { #category : #initialization }
-ERMyRegistrationSummaryTab >> initialize [ 
-	super initialize .
+ERMyRegistrationSummaryTab >> initialize [
+
+	super initialize.
 	messageComponent id: 'alertMyRegistration'
 ]
 
 { #category : #accessing }
 ERMyRegistrationSummaryTab >> managerOfInvoice [
+	| group |
 	attendee idGroup isNotNil
-	ifTrue: [ |group|
+	ifTrue: [ 
 		group := controller conference getGroupOfAttendee: attendee.
 		^ group ]
-	ifFalse: [ ^ attendee ] 
+	ifFalse: [ ^ attendee ]
 ]
 
 { #category : #actions }
@@ -51,16 +61,17 @@ ERMyRegistrationSummaryTab >> paymentStatus [
 			^ 'Payment no registered yet. Amount due: '
 				, attendee paymentInformation paymentAmount asString , ' '
 				, attendee paymentInformation paymentCurrency , '(s) '
-				, ' (NOTE: you could have paid but we could have not registered it yet)']
+				, ' (NOTE: you could have paid but we could have not registered it yet)' ]
 ]
 
 { #category : #rendering }
 ERMyRegistrationSummaryTab >> redirectViewForBankTransfer [
+
 	| bankTransferView |
 	bankTransferView := ERBankTransferPaymentInfoView
 		on: attendee
 		withContent: content.
-	content state: bankTransferView 
+	content state: bankTransferView
 ]
 
 { #category : #actions }
@@ -72,14 +83,20 @@ ERMyRegistrationSummaryTab >> redirectionPayPAL [
 
 { #category : #rendering }
 ERMyRegistrationSummaryTab >> renderButtonsOn: html [
-	self renderModifyRegistrationOn: html.
-	self renderPayButtonOn: html.
-	self renderDownloadInvoiceOn: html
+	html div
+		style: '
+			display: flex;
+			justify-content: space-evenly;';
+		with: [
+			self renderModifyRegistrationOn: html.
+			self renderPayButtonOn: html.
+			self renderDownloadInvoiceOn: html ]
 ]
 
 { #category : #rendering }
-ERMyRegistrationSummaryTab >> renderContainerOn: html [ 	
-	html horizontalRule .
+ERMyRegistrationSummaryTab >> renderContainerOn: html [
+ 	
+	html horizontalRule.
 	html render: messageComponent .
 	self renderLabelsSummaryOn: html.
 	self renderButtonsOn: html.
@@ -96,6 +113,7 @@ ERMyRegistrationSummaryTab >> renderDownloadInvoiceOn: html [
 
 { #category : #rendering }
 ERMyRegistrationSummaryTab >> renderLabelsSummaryOn: html [
+
 	html
 		paragraph: [ html strong: 'Attendace Day(s): '.
 			html text: attendee conferenceInformation daysOfAssistance ].
@@ -105,7 +123,7 @@ ERMyRegistrationSummaryTab >> renderLabelsSummaryOn: html [
 ]
 
 { #category : #rendering }
-ERMyRegistrationSummaryTab >> renderModifyRegistrationOn: html. [
+ERMyRegistrationSummaryTab >> renderModifyRegistrationOn: html [.
 	html mdlAnchorButton 
 		raised;
 		rippleEffect;
@@ -117,13 +135,14 @@ ERMyRegistrationSummaryTab >> renderModifyRegistrationOn: html. [
 
 { #category : #rendering }
 ERMyRegistrationSummaryTab >> renderPayButtonOn: html [
+
 	html mdlAnchorButton 
 		raised;
 		rippleEffect;
 		id: 'pay';
 		disabled: (attendee isAbleToPay ifTrue: 'disabled');
 		callback: [ self pay ];
-		with: 'Pay'.
+		with: 'Payment information'.
 ]
 
 { #category : #accessing }
@@ -143,5 +162,6 @@ ERMyRegistrationSummaryTab >> title [
 
 { #category : #updating }
 ERMyRegistrationSummaryTab >> updateMyRegistration [
+
 	self modifyRegistrationInformation: attendee.
 ]

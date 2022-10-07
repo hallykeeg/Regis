@@ -44,23 +44,22 @@ ERAdminView class >> on: anAttendee withContent: aContent withController: aContr
 ERAdminView >> acceptUser [
 	[ controller updateUser: (modifiedUser save) model.
 	messageComponent changeToAlertSuccess .
-	messageComponent errorMessage: 'Successful user update']
+	messageComponent errorMessage: 'User successfully updated' ]
 		on: ERException
 		do: [ :exception | 
 			messageComponent changeToAlertOfError .
-			messageComponent errorMessage: exception messageText].
-	
+			messageComponent errorMessage: exception messageText ].
 ]
 
 { #category : #adding }
 ERAdminView >> blockChangePassword [
-	^ [:html | 
-		html render: changePasswordForm ] 
+	^ [ :html | 
+		html render: changePasswordForm ]
 ]
 
 { #category : #adding }
 ERAdminView >> blockEditUser [ 
-	^ [:html | html heading level3 with: 'Edit profile'.
+	^ [ :html | html heading level3 with: 'Edit profile'.
 			html horizontalRule .
 			html form
 				method: 'post';
@@ -70,15 +69,14 @@ ERAdminView >> blockEditUser [
 					html render: modifiedUser.
 					self renderAnchorToChangePasswordOn: html.
 					html horizontalRule.
-					self renderButtonsOn: html
-				]
-		]
+					self renderButtonsOn: html ] ]
 ]
 
 { #category : #adding }
 ERAdminView >> cancel [
 	attendee abortChanges.
-	self initializeFormUser 
+	self initializeFormUser.
+	content state: content lastState.
 ]
 
 { #category : #adding }
@@ -108,7 +106,7 @@ ERAdminView >> initializeChangePassword [
 										on: attendee 
 										withContent: content 
 										container: self) 
-										cancel: [ contentBlock := self blockEditUser  ].
+										cancel: [ contentBlock := self blockEditUser ].
 ]
 
 { #category : #adding }

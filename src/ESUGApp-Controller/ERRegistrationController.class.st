@@ -43,37 +43,34 @@ ERRegistrationController >> initialize [
 
 { #category : #saving }
 ERRegistrationController >> save [
-	| user|
+	| user |
 	conference validateIfEmailIsAlreadyRegistered: attendee userAccount.
 	self attendee userAccount password: (ERUserAccount hashPassword: self attendee userAccount password)asString.
 	self attendee userAccount confirmPassword: ''.
 	user := self attendee userAccount save.
-	conference addUser: user.
+	conference addNewUser: user.
 	^ user
 ]
 
 { #category : #saving }
 ERRegistrationController >> saveAttendee [
-	|savedAttendee|
+	| savedAttendee |
 	self attendee paymentInformation invoiceNumberIfNone: [ conference incrementInvoiceNumber ].
 	self updatePaymentRate: self attendee.
-	savedAttendee := self addAttendee: attendee .
-	conference save.
-	self notifyAllObservers .
+	savedAttendee := self addAttendee: attendee.
 	^ savedAttendee userAccount 
 ]
 
 { #category : #saving }
 ERRegistrationController >> saveGroupManager [
-	|groupSaved|
+	| groupSaved |
 	self attendee userAccount: self save.
-	groupSaved := ERGroup groupManager: self attendee.
+	groupSaved := self attendee.
 	groupSaved paymentInformation invoiceNumberIfNone: [ conference incrementInvoiceNumber ]. 		
 	groupSaved := groupSaved save.
-	conference addGroup: groupSaved .
-	conference save.
-	self notifyAllObservers .
-	^ self attendee userAccount 
+	conference addGroup: groupSaved.
+	self notifyAllObservers.
+	^ self attendee userAccount
 ]
 
 { #category : #validations }

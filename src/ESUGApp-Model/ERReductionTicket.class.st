@@ -6,7 +6,7 @@ I am a model of Reduction Ticket
 "
 Class {
 	#name : #ERReductionTicket,
-	#superclass : #SDActiveRecord,
+	#superclass : #ESUGActiveRecord,
 	#instVars : [
 		'ticketId',
 		'discountStrategy',
@@ -43,6 +43,7 @@ ERReductionTicket >> discountStrategy: anObject [
 
 { #category : #action }
 ERReductionTicket >> discountStrategyAsString [
+
 	self strategyIsFixDiscount
 		ifTrue: [ ^ 'Fix Discount' ].
 	self strategyIsPercentageDiscount

@@ -12,16 +12,22 @@ Class {
 
 { #category : #initialization }
 ERGroupManagerRegistrationPage >> initialize [
+	| group |
 	super initialize.
-	pageController attendee: ERGroupManager new.
-	title := 'Group Manager'
+	group := ERGroup new.
+	pageController attendee: group.
+	title := 'Group Registration'
 ]
 
 { #category : #initialization }
 ERGroupManagerRegistrationPage >> initializeTabForms [
-	self addBasicInfoTab nextTabName: 'Affiliation'.
-	self addBillingInfoTab previousTabName: 'User';
-								buttonsOfTab: [ :html | self renderDoneButtonOn: html ].
+	self addBasicInfoTab 
+		nextTabName: 'Affiliation';
+		tabName: 'Group Manager'.
+	self addContactInfoTab 
+		tabName: 'Group Contact'.
+	self addBillingInfoTab
+		buttonsOfTab: [ :html | self renderDoneButtonOn: html ].
 	currentTab := basicInfoTab.
 	currentTab updateStateTab: currentTab tabName.
 ]
@@ -37,16 +43,38 @@ ERGroupManagerRegistrationPage >> redirectFinishRegister [
 ]
 
 { #category : #saving }
+ERGroupManagerRegistrationPage >> saveAffilInfo [
+	currentTab := affiliationInfo.
+	pageController attendee affiliationInformation: (affiliationInfo contentTab save) model
+]
+
+{ #category : #saving }
+ERGroupManagerRegistrationPage >> saveBasicInfo [
+	
+	currentTab := basicInfoTab.
+	pageController attendee userAccount: ((basicInfoTab contentTab save) model as: ERUserAccount).
+]
+
+{ #category : #saving }
+ERGroupManagerRegistrationPage >> saveContactInfo [
+	currentTab := contactInfoTab.
+	pageController attendee contactInformation: (contactInfoTab contentTab save) model
+]
+
+{ #category : #saving }
 ERGroupManagerRegistrationPage >> saveRegistration [
+	"Save method to Group Manager. Do not send email to group manager when register because this not have an invoice"
+	
 	| user |
 	user := pageController saveGroupManager.
 	pageController attendee userAccount: user.
-	"Do not send email to group manager when register because this not have a invoice"
 	^ user
 ]
 
 { #category : #saving }
 ERGroupManagerRegistrationPage >> saveTabs [
+
 	self saveBasicInfo.
+	self saveContactInfo.
 	self saveAffilInfo.
 ]

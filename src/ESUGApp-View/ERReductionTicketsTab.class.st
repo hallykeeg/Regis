@@ -41,9 +41,9 @@ ERReductionTicketsTab >> blockTableToExecute [
 	^ [ :anTicket | 
 	OrderedCollection new
 		add: ([ :att | att ticketId ] value: anTicket);
-		add: ([ :att | att discountStrategy description ] value: anTicket );
-		add: ([ :att | att limitStrategy description ] value: anTicket );
-		add: ([:att | (self listOfAttendees: att)size] value: anTicket);
+		add: ([ :att | att discountStrategy description ] value: anTicket);
+		add: ([ :att | att limitStrategy description ] value: anTicket);
+		add: ([ :att | (self listOfAttendees: att)size ] value: anTicket);
 		yourself ]
 ]
 
@@ -64,8 +64,17 @@ ERReductionTicketsTab >> deleteTicket: aTicket [
 ]
 
 { #category : #accessing }
+ERReductionTicketsTab >> filterTicketInformation [
+
+	^ [ :object :text | 
+		((object ticketId) includesSubstring: text caseSensitive: false)
+			or: [ ((object discountStrategy description) includesSubstring: text caseSensitive: false)
+			or: [ ((object limitStrategy description) includesSubstring: text caseSensitive: false) ] ] ]
+]
+
+{ #category : #accessing }
 ERReductionTicketsTab >> headers [ 	
-	^ #('Id'	'Discount Strategy'	'Use Limit Strategy'	'Used Times' '')
+	^ {'Id' .	'Discount Strategy' .	'Use Limit Strategy'	. 'Used Times' . PSTableSortableHeaderOptions new cell: ''}
 ]
 
 { #category : #initialization }
@@ -120,9 +129,11 @@ ERReductionTicketsTab >> listOfAttendees: aTicket [
 
 { #category : #rendering }
 ERReductionTicketsTab >> listOfTicket: anTicket [
-	|list|
-	list := (ERAttendeesOfTicketView on: anTicket withContent: content ) cancelCallback: [ self returnToThePreviousState. 
-			self updateStateTab: self tabName].
+	| list |
+	list := (ERAttendeesOfTicketView on: anTicket withContent: content)
+		cancelCallback: [ 
+			self returnToThePreviousState. 
+			self updateStateTab: self tabName ].
 	content state: list.
 	self updateStateTab: self tabName.
 ]
@@ -149,12 +160,24 @@ ERReductionTicketsTab >> renderContainerOn: html [
 { #category : #rendering }
 ERReductionTicketsTab >> renderTableOfTicketsOn: html [
 	table := ERTable new
-		headers: self headers;
+		tableId: 'tickets-table';
+		limitPageShowed: 3;
+		header: self headers;
+		validation: self filterTicketInformation;
 		levelTotal: 6;
-		listObject: self tickets;
+		rows: self tickets;
 		blockToExecute: self blockTableToExecute;
-		listToRenderButton: self listDataToRenderButton.
+		listToRenderButton: self listDataToRenderButton;
+		sortingMethod: self sortingMethodTickets.
 	html render: table
+]
+
+{ #category : #accessing }
+ERReductionTicketsTab >> sortingMethodTickets [
+	^ { [ :att | att ticketId ] 
+		. [ :att | att discountStrategy description]
+		. [ :att | att limitStrategy description ]
+		. [ :att | (self listOfAttendees: att)size ] }
 ]
 
 { #category : #accessing }

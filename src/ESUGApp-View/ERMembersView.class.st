@@ -1,3 +1,6 @@
+"
+I am the view to show the registered Attendees of a group
+"
 Class {
 	#name : #ERMembersView,
 	#superclass : #ERGroupRegistrationTab,
@@ -7,10 +10,10 @@ Class {
 { #category : #tableBlock }
 ERMembersView >> blockTableToExecute [
 	^ [:user :html | OrderedCollection new
-		add: ([ :att | att userAccount firstName ] value: user);
+		add: ([ :att | (att userAccount firstName, ' ', att userAccount lastName) ] value: user);
 		add: ([ :att | att userAccount email ] value: user);
 		add: ([ :att | att paymentInformation paymentAmount asString
-			, ' ', att paymentInformation paymentCurrency, '(s)'  ] value: user);
+			, ' €'  ] value: user);
 		yourself
 	]
 ]
@@ -22,19 +25,28 @@ ERMembersView >> deleteAttendeeFromGroup: anAttendee [
 		ifFalse:[ controller user: self session user.
 	controller deleteAttendee: anAttendee ]
 		ifTrue: [messageComponent changeToAlertOfError.
-			messageComponent errorMessage: 'You can not delete an attendee after having paid.']
+			messageComponent errorMessage: 'You can not delete an attendee after having paid.' ]
+]
+
+{ #category : #accessing }
+ERMembersView >> filterMemberGroupInformation [
+
+	^ [ :object :text | 
+		((object userAccount firstName) includesSubstring: text caseSensitive: false)
+			or: [ ((object userAccount lastName) includesSubstring: text caseSensitive: false)
+			or: [ ((object userAccount email) includesSubstring: text caseSensitive: false) ] ] ]
 ]
 
 { #category : #accessing }
 ERMembersView >> headers [
-	^ #('Name(D)' 'Email' 'Fee' '')
+	^ { 'Name(D)' . 'Email' . 'Fee' . PSTableSortableHeaderOptions new cell: '' }
 ]
 
 { #category : #accessing }
 ERMembersView >> initialize [
 	super initialize .
 	messageComponent id: 'alertOfMembers'.
-	callback := nil
+	callback := nil.
 ]
 
 { #category : #initialization }
@@ -50,18 +62,18 @@ ERMembersView >> listDataToRenderButton [
 		add:
 			(Array
 				with: 'edit'
-				with: [ :att | self modifyRegistrationOf: att ]
+				with: [ :att | self modifyGroupMemberRegistrationOf: att ]
 				with: [ :att | att id , '-modify' ]
-				with: 'Modify'
+				with: 'Modify Attendee Information'
 				with: ''
-				with:  self group isAbleToPay );
+				with:  self group isAbleToPay);
 		add:
 			(Array
 				with: 'delete'
 				with: [ :att | self deleteAttendeeFromGroup: att ]
 				with: [ :att | att id , '-delete' ]
-				with: 'Delete'
-				with: 'return confirm(''Are you sure you want to delete this item?'');'
+				with: 'Delete user'
+				with: 'return confirm(''Are you sure you want to delete this user?'');'
 				with:  self group isAbleToPay);
 		add:
 			(Array
@@ -77,19 +89,21 @@ ERMembersView >> listDataToRenderButton [
 { #category : #rendering }
 ERMembersView >> renderButtonsOn: html [
 	self renderRegisterAttendee: html.
-	self alreadyRegisteredAsAttendee ifFalse:[
-	self renderRegisterMyselfAsAttendee: html]
+	self alreadyRegisteredAsAttendee 
+		ifFalse:[
+			self renderRegisterMyselfAsAttendee: html ]
 ]
 
 { #category : #rendering }
 ERMembersView >> renderContainerOn: html [
+
 	html form
 		method: 'post';
 		id: 'formMembers';
 		with: [
 			html horizontalRule.
-			html render: messageComponent .
-			self renderTableOfAttendsOn: html]
+			html render: messageComponent ].
+	self renderTableOfAttendsOn: html
 ]
 
 { #category : #rendering }
@@ -115,13 +129,24 @@ ERMembersView >> renderRegisterMyselfAsAttendee: html [
 { #category : #rendering }
 ERMembersView >> renderTableOfAttendsOn: html [
 	table := ERTable new
-		headers: self headers;
+		tableId: 'memberGroup-table';
+		limitPageShowed: 3;
+		validation: self filterMemberGroupInformation;
+		header: self headers;
 		levelTotal: 6;
-		listObject: self attends;
+		rows: self attends;
 		blockToExecute: self blockTableToExecute;
 		listToRenderButton: self listDataToRenderButton;
-		dictToRenderDownloadButton: Dictionary new.
+		dictToRenderDownloadButton: Dictionary new;
+		sortingMethod: self sortingMethodMembers.
 	html render: table
+]
+
+{ #category : #accessing }
+ERMembersView >> sortingMethodMembers [
+	^ { [ :att | (att userAccount firstName, ' ', att userAccount lastName) ] 
+		. [ :att | att userAccount email ]
+		. [ :att | att paymentInformation paymentAmount asString, ' €' ] }
 ]
 
 { #category : #accessing }

@@ -27,7 +27,7 @@ ERProposedAwardsTab >> createAward: anAward [
 
 { #category : #accessing }
 ERProposedAwardsTab >> headers [
-	^ #('Name'	'Submitted By' 'Download URL' 'Demo URL' '')
+	^ { 'Name'	. 'Submitted By' . PSTableSortableHeaderOptions new cell: 'Download URL' . PSTableSortableHeaderOptions new cell: 'Demo URL' . PSTableSortableHeaderOptions new cell:'' }
 ]
 
 { #category : #initialization }
@@ -79,11 +79,15 @@ ERProposedAwardsTab >> modifyAward: anAward [
 { #category : #rendering }
 ERProposedAwardsTab >> renderAwardsTableOn: html [
 	table := ERTable new
-		headers: self headers;
+		tableId: 'proposedAwards-table';
+		validation: self filterAwardsInformation;
+		limitPageShowed: 3;
+		header: self headers;
 		levelTotal: 6;
-		listObject: self submittedAwards;
+		rows: self submittedAwards;
 		blockToExecute: self blockTableAwardsToExecute;
-		listToRenderButton: self listDataToRenderButton.
+		listToRenderButton: self listDataToRenderButton;
+		sortingMethod: self sortingMethodAwards.
 	html render: table
 ]
 
@@ -114,6 +118,14 @@ ERProposedAwardsTab >> renderTableOn: html [
 	self submittedAwards isEmpty 
 		ifTrue: [ self renderMessageEmptyOn: html ]
 		ifFalse: [ self renderAwardsTableOn: html ]
+]
+
+{ #category : #accessing }
+ERProposedAwardsTab >> sortingMethodAwards [
+	^ { [ :att | att nameAward ] 
+		. [ :att | att submitter userAccount email ]
+		. [ :att | ]
+		. [ :att | ] }
 ]
 
 { #category : #accessing }
