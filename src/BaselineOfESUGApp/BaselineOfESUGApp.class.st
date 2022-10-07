@@ -33,19 +33,31 @@ BaselineOfESUGApp >> baseline: spec [
 		do: [
 			self setUpDependencies: spec.
 			spec
-				package: 'ESUGApp-PostMark-Core' with: [ spec requires: 'NeoJSON' ];
-				package: 'ESUGApp-Model' with: [ spec requires: #('DatabaseEsug') ];
-				package: 'ESUGApp-Controller' with: [ spec requires: #('Seaside3' 'NeoCSV') ];
-				package: 'ESUGApp-Core' with: [ spec requires: #('ESUGApp-View') ];		
-				package: 'ESUGApp-Library' with: [ spec requires: #('Seaside3' 'MaterialDesignLite' 'ESUGApp-Model') ];
-				package: 'ESUGApp-Form' with: [ spec requires: #('ESUGApp-View') ];
-				package: 'ESUGApp-Component' with: [ spec requires: #('MaterialDesignLite' 'ESUGApp-Controller') ];
-				package: 'ESUGApp-View' with: [ spec requires: #('ESUGApp-Library' 'ESUGApp-Component' 'PSTableSeaside') ];
-				package: 'ESUGApp-Tests' with: [ spec requires: #('Parasol' 'ESUGApp-Core') ];
-				package: 'ESUGApp-Extensions' with: [ spec requires: #('ESUGApp-Core') ].
+				package: 'ESUGApp-PostMark-Core' 
+					with: [ spec requires: 'NeoJSON' ];
+				package: 'ESUGApp-Model' 
+					with: [ spec requires: #('DatabaseEsug') ];
+				package: 'ESUGApp-Controller' 
+					with: [ spec requires: #('Seaside3' 'NeoCSV') ];
+				package: 'ESUGApp-Core' 
+					with: [ spec requires: #('ESUGApp-View') ];		
+				package: 'ESUGApp-Library' 
+					with: [ spec requires: #('Seaside3' 'MaterialDesignLite' 'ESUGApp-Model') ];
+				package: 'ESUGApp-Form' 
+					with: [ spec requires: #('ESUGApp-View') ];
+				package: 'ESUGApp-Component' 
+					with: [ spec requires: #('MaterialDesignLite' 'ESUGApp-Controller') ];
+				package: 'ESUGApp-View' 
+					with: [ spec requires: #('ESUGApp-Library' 'ESUGApp-Component' 'PSTableSeaside') ];
+				package: 'ESUGApp-Tests' 
+					with: [ spec requires: #('Parasol' 'ESUGApp-Core') ];
+				package: 'ESUGApp-Extensions' 
+					with: [ spec requires: #('ESUGApp-Core') ].
 			spec 
-				group: 'Core' with: #('ESUGApp-PostMark-Core' 'ESUGApp-Form' 'ESUGApp-Extensions' 'ESUGApp-Core');
-				group: 'Tests' with: #('ESUGApp-PostMark-Core' 'ESUGApp-Form' 'ESUGApp-Tests' 'ESUGApp-Extensions' 'ESUGApp-Core') ]
+				group: 'Core' 
+				with: #('ESUGApp-PostMark-Core' 'ESUGApp-Form' 'ESUGApp-Extensions' 'ESUGApp-Core');
+				group: 'Tests' 
+				with: #('ESUGApp-PostMark-Core' 'ESUGApp-Form' 'ESUGApp-Tests' 'ESUGApp-Extensions' 'ESUGApp-Core') ]
 ]
 
 { #category : #baselines }
@@ -77,10 +89,10 @@ BaselineOfESUGApp >> setUpDependencies: spec [
 		baseline: 'PSTableSeaside'
 		with: [ spec repository: 'github://ESUG/PSTableSeaside:master/src' ].
 	
-	" this is already loaded in Pharo 10 
 	spec 
 		baseline: 'NeoJSON' 
-		with: [ spec repository: 'github://svenvc/NeoJSON/repository' ]."
+		with: [ spec repository: 'github://svenvc/NeoJSON/repository' ].
+	
 	spec 
 		baseline: 'NeoCSV' 
 		with: [ spec repository: 'github://svenvc/NeoCSV/repository' ].
