@@ -50,27 +50,37 @@ BaselineOfESUGApp >> baseline: spec [
 
 { #category : #baselines }
 BaselineOfESUGApp >> setUpDependencies: spec [
-	spec
-		baseline: 'PSTableSeaside'
-		with: [ spec repository: 'github://daniapq/PSTableSeaside:master/src' ].
-	spec
-		baseline: 'DatabaseEsug'
-		with: [ spec repository: 'github://daniapq/DatabaseEsug:master/src' ].
+
 	spec	
 		baseline: 'Seaside3'	
 		with: [ spec	
-				repository: 'github://SeasideSt/Seaside:v3.4.x/repository' ].
+				repository: 'github://SeasideSt/Seaside:v3.4.8/repository' ].
+	"loaded in P10"
+
+	spec
+		baseline: 'MaterialDesignLite'
+		with: [ spec repository: 'github://DuneSt/MaterialDesignLite:v2.4.1/src' ].
+
+	spec
+		baseline: 'DatabaseEsug'
+		with: [ spec repository: 'github://ESUG/DatabaseEsug:master/src' ].
+	"loaded in P10. Not a single test! Unbelievable"
+	
 	spec
 		baseline: 'Parasol'
 		with: [ spec
-				loads: 'tests';
+				loads: 'default';
 				repository: 'github://daniapq/Parasol:master/repository' ].
+	"use default not to load Seaside again"
+	
 	spec
-		baseline: 'MaterialDesignLite'
-		with: [ spec repository: 'github://daniapq/MaterialDesignLite:master/src' ].
+		baseline: 'PSTableSeaside'
+		with: [ spec repository: 'github://ESUG/PSTableSeaside:master/src' ].
+	
+	" this is already loaded in Pharo 10 
 	spec 
 		baseline: 'NeoJSON' 
-		with: [ spec repository: 'github://svenvc/NeoJSON/repository' ].
+		with: [ spec repository: 'github://svenvc/NeoJSON/repository' ]."
 	spec 
 		baseline: 'NeoCSV' 
 		with: [ spec repository: 'github://svenvc/NeoCSV/repository' ].
