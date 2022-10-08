@@ -38,11 +38,11 @@ BaselineOfESUGApp >> baseline: spec [
 				package: 'ESUGApp-Model' 
 					with: [ spec requires: #('DatabaseEsug') ];
 				package: 'ESUGApp-Controller' 
-					with: [ spec requires: #('Seaside3' 'NeoCSV') ];
+					with: [ spec requires: #('NeoCSV') ];
 				package: 'ESUGApp-Core' 
 					with: [ spec requires: #('ESUGApp-View') ];		
 				package: 'ESUGApp-Library' 
-					with: [ spec requires: #('Seaside3' 'MaterialDesignLite' 'ESUGApp-Model') ];
+					with: [ spec requires: #('MaterialDesignLite' 'ESUGApp-Model') ];
 				package: 'ESUGApp-Form' 
 					with: [ spec requires: #('ESUGApp-View') ];
 				package: 'ESUGApp-Component' 
@@ -63,10 +63,11 @@ BaselineOfESUGApp >> baseline: spec [
 { #category : #baselines }
 BaselineOfESUGApp >> setUpDependencies: spec [
 
-	spec	
+	"spec	
 		baseline: 'Seaside3'	
 		with: [ spec	
 				repository: 'github://SeasideSt/Seaside:v3.4.8/repository' ].
+	Material design should certainly load material design"
 	"loaded in P10"
 
 	spec
@@ -82,7 +83,7 @@ BaselineOfESUGApp >> setUpDependencies: spec [
 		baseline: 'Parasol'
 		with: [ spec
 				loads: 'default';
-				repository: 'github://daniapq/Parasol:master/repository' ].
+				repository: 'github://SeasideSt/Parasol:master/repository' ].
 	"use default not to load Seaside again"
 	
 	spec
