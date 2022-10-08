@@ -65,7 +65,7 @@ BaselineOfESUGApp >> setUpDependencies: spec [
 
 	spec
 		baseline: 'MaterialDesignLite'
-		with: [ spec repository: 'github://ESUG/MaterialDesignLite:v2.4.2/src' ].
+		with: [ spec repository: 'github://DuneSt/MaterialDesignLite:v2.x.x/src' ].
 
 	spec
 		baseline: 'DatabaseEsug'
