@@ -63,16 +63,9 @@ BaselineOfESUGApp >> baseline: spec [
 { #category : #baselines }
 BaselineOfESUGApp >> setUpDependencies: spec [
 
-	"spec	
-		baseline: 'Seaside3'	
-		with: [ spec	
-				repository: 'github://SeasideSt/Seaside:v3.4.8/repository' ].
-	Material design should certainly load material design"
-	"loaded in P10"
-
 	spec
 		baseline: 'MaterialDesignLite'
-		with: [ spec repository: 'github://DuneSt/MaterialDesignLite:v2.4.1/src' ].
+		with: [ spec repository: 'github://ESUG/MaterialDesignLite:v2.4.2/src' ].
 
 	spec
 		baseline: 'DatabaseEsug'
