@@ -19,9 +19,6 @@ This file does not load other dependencies because they have a conflicts with ot
 Class {
 	#name : #BaselineOfESUGApp,
 	#superclass : #BaselineOf,
-	#classVars : [
-		'Initialized'
-	],
 	#category : #BaselineOfESUGApp
 }
 
@@ -33,31 +30,19 @@ BaselineOfESUGApp >> baseline: spec [
 		do: [
 			self setUpDependencies: spec.
 			spec
-				package: 'ESUGApp-PostMark-Core' 
-					with: [ spec requires: 'NeoJSON' ];
-				package: 'ESUGApp-Model' 
-					with: [ spec requires: #('DatabaseEsug') ];
-				package: 'ESUGApp-Controller' 
-					with: [ spec requires: #('NeoCSV') ];
-				package: 'ESUGApp-Core' 
-					with: [ spec requires: #('ESUGApp-View') ];		
-				package: 'ESUGApp-Library' 
-					with: [ spec requires: #('MaterialDesignLite' 'ESUGApp-Model') ];
-				package: 'ESUGApp-Form' 
-					with: [ spec requires: #('ESUGApp-View') ];
-				package: 'ESUGApp-Component' 
-					with: [ spec requires: #('MaterialDesignLite' 'ESUGApp-Controller') ];
-				package: 'ESUGApp-View' 
-					with: [ spec requires: #('ESUGApp-Library' 'ESUGApp-Component' 'PSTableSeaside') ];
-				package: 'ESUGApp-Tests' 
-					with: [ spec requires: #('Parasol' 'ESUGApp-Core') ];
-				package: 'ESUGApp-Extensions' 
-					with: [ spec requires: #('ESUGApp-Core') ].
+				package: 'ESUGApp-PostMark-Core' with: [ spec requires: #('NeoJSON') ];
+				package: 'ESUGApp-Model' with: [ spec requires: #('DatabaseEsug') ];
+				package: 'ESUGApp-Controller' with: [ spec requires: #('NeoCSV') ];
+				package: 'ESUGApp-Core' with: [ spec requires: #('ESUGApp-View') ];		
+				package: 'ESUGApp-Library' with: [ spec requires: #('MaterialDesignLite' 'ESUGApp-Model') ];
+				package: 'ESUGApp-Form' with: [ spec requires: #('ESUGApp-View') ];
+				package: 'ESUGApp-Component' with: [ spec requires: #('MaterialDesignLite' 'ESUGApp-Controller') ];
+				package: 'ESUGApp-View' with: [ spec requires: #('ESUGApp-Library' 'ESUGApp-Component' 'PSTableSeaside') ];
+				package: 'ESUGApp-Tests' with: [ spec requires: #('Parasol' 'ESUGApp-Core') ];
+				package: 'ESUGApp-Extensions' with: [ spec requires: #('ESUGApp-Core') ].
 			spec 
-				group: 'Core' 
-				with: #('ESUGApp-PostMark-Core' 'ESUGApp-Form' 'ESUGApp-Extensions' 'ESUGApp-Core');
-				group: 'Tests' 
-				with: #('ESUGApp-PostMark-Core' 'ESUGApp-Form' 'ESUGApp-Tests' 'ESUGApp-Extensions' 'ESUGApp-Core') ]
+				group: 'Core' with: #('ESUGApp-PostMark-Core' 'ESUGApp-Form' 'ESUGApp-Extensions' 'ESUGApp-Core');
+				group: 'Tests' with: #('Core' 'ESUGApp-Tests') ]
 ]
 
 { #category : #baselines }
