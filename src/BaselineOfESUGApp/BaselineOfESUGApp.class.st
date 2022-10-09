@@ -34,7 +34,7 @@ BaselineOfESUGApp >> baseline: spec [
 				package: 'ESUGApp-Model' with: [ spec requires: #('DatabaseEsug') ];
 				package: 'ESUGApp-Controller' with: [ spec requires: #('NeoCSV') ];
 				package: 'ESUGApp-Core' with: [ spec requires: #('ESUGApp-View') ];		
-				package: 'ESUGApp-Library' with: [ spec requires: #('MaterialDesignLite' 'ESUGApp-Model') ];
+				package: 'ESUGApp-Library' with: [ spec requires: #('MaterialDesignLite' 'Seaside3' 'ESUGApp-Model') ];
 				package: 'ESUGApp-Form' with: [ spec requires: #('ESUGApp-View') ];
 				package: 'ESUGApp-Component' with: [ spec requires: #('MaterialDesignLite' 'ESUGApp-Controller') ];
 				package: 'ESUGApp-View' with: [ spec requires: #('ESUGApp-Library' 'ESUGApp-Component' 'PSTableSeaside') ];
@@ -47,14 +47,12 @@ BaselineOfESUGApp >> baseline: spec [
 
 { #category : #baselines }
 BaselineOfESUGApp >> setUpDependencies: spec [
+	
+	spec baseline: 'Seaside3' with: [ spec repository: 'github://SeasideSt/Seaside:v3.4.x/repository' ].
 
-	spec
-		baseline: 'MaterialDesignLite'
-		with: [ spec repository: 'github://DuneSt/MaterialDesignLite:v2.x.x/src' ].
+	spec baseline: 'MaterialDesignLite' with: [ spec repository: 'github://DuneSt/MaterialDesignLite:v2.x.x/src' ].
 
-	spec
-		baseline: 'DatabaseEsug'
-		with: [ spec repository: 'github://ESUG/DatabaseEsug:master/src' ].
+	spec baseline: 'DatabaseEsug' with: [ spec repository: 'github://ESUG/DatabaseEsug:master/src' ].
 	"loaded in P10. Not a single test! Unbelievable"
 	
 	spec
@@ -64,15 +62,9 @@ BaselineOfESUGApp >> setUpDependencies: spec [
 				repository: 'github://SeasideSt/Parasol:master/repository' ].
 	"use default not to load Seaside again"
 	
-	spec
-		baseline: 'PSTableSeaside'
-		with: [ spec repository: 'github://ESUG/PSTableSeaside:master/src' ].
+	spec baseline: 'PSTableSeaside' with: [ spec repository: 'github://ESUG/PSTableSeaside:master/src' ].
 	
-	spec 
-		baseline: 'NeoJSON' 
-		with: [ spec repository: 'github://svenvc/NeoJSON/repository' ].
+	spec baseline: 'NeoJSON' with: [ spec repository: 'github://svenvc/NeoJSON/repository' ].
 	
-	spec 
-		baseline: 'NeoCSV' 
-		with: [ spec repository: 'github://svenvc/NeoCSV/repository' ].
+	spec baseline: 'NeoCSV' with: [ spec repository: 'github://svenvc/NeoCSV/repository' ].
 ]
