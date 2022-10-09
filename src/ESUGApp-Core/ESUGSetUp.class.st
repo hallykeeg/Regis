@@ -6,7 +6,7 @@ I am a principal class for page
 Examples
 --------------------
 
-This class load dependencies with conflicts such as: Artefact, MaterialDesignLite (magritte) and Magritte.
+This class load dependencies with conflicts such as: MaterialDesignLite (magritte) and Magritte.
 
 When execute: 
 
@@ -404,20 +404,9 @@ ESUGSetUp class >> initializeDataFromScratch [
 ]
 
 { #category : #installationOfConflictLibraries }
-ESUGSetUp class >> installArtefact [
-	Metacello new
-        githubUser: 'Lin777' project: 'Artefact' commitish: 'master' path: 'src';
-        baseline: 'Artefact';
-        onConflict: [ :ex :a :b | a projectName = b projectName ifTrue: [ a projectSpec isBaselineOfProjectSpec ifTrue: [ ex useLoaded ] ifFalse: [ ex useIncoming ] ] ifFalse: [ ex resume ] ];
-        load: #('default' 'seaside').
-]
-
-{ #category : #installationOfConflictLibraries }
 ESUGSetUp class >> installDependencesWithConflicts [
 	self installMagritte.
 	self installMDLForMagritte.
-	self installArtefact.
-	
 ]
 
 { #category : #installationOfConflictLibraries }
@@ -425,7 +414,7 @@ ESUGSetUp class >> installMDLForMagritte [
 	Metacello new 
 		baseline: 'MaterialDesignLite'; 
 		repository: 'github://Lin777/MaterialDesignLite:master/src';
-		onConflict: [ :ex :a :b | a projectName = b projectName ifTrue: [ a projectSpec 		isBaselineOfProjectSpec ifTrue: [ ex useLoaded ] ifFalse: [ ex useIncoming ] ] ifFalse: [ ex resume ] ];
+		onConflict: [ :ex :a :b | a projectName = b projectName ifTrue: [ a projectSpec isBaselineOfProjectSpec ifTrue: [ ex useLoaded ] ifFalse: [ ex useIncoming ] ] ifFalse: [ ex resume ] ];
 		load: 'all'
 ]
 
