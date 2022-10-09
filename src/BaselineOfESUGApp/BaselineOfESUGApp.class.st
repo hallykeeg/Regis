@@ -68,5 +68,9 @@ BaselineOfESUGApp >> setUpDependencies: spec [
 	
 	spec baseline: 'NeoCSV' with: [ spec repository: 'github://svenvc/NeoCSV/repository' ].
 	
-	spec baseline: 'Artefact' with: [ spec repository: 'github://pharo-contributions/Artefact:v1.x.x/src' ].
+	spec
+		baseline: 'Artefact'
+		with: [ spec
+				loads: #('default' 'seaside');
+				repository: 'github://pharo-contributions/Artefact:v1.x.x/src' ].
 ]
