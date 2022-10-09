@@ -35,6 +35,22 @@ Admin credentials:
 email: admin@esug.org
 password: 12345678
 
+To load the project in Pharo 10 you can use this script:
+
+```st
+  Metacello new  
+    baseline: 'ESUGApp';
+    githubUser: 'ESUG' project: 'Regis' commitish: 'master' path: 'src';
+    onWarningLog;
+    onConflictUseLoaded;
+    onUpgrade: [ :ex | ex useIncoming ];
+    load: #('Core').
+
+ESUGSetUp start
+```
+
+> This might evolve since I am working to simplify the dependencies management and to migrate the project to Pharo 10. 
+
 ### Testing Data
 
 To automatically register attendees and group managers execute the following script after installation and initialization of the project (review previous script)
