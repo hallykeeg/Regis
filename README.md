@@ -8,8 +8,8 @@ Regis was initially developed and currently supported by [SEMANTICS S.R.L.](http
 
 ### Prerequisites
 
-- Latest Pharo 7 image
-- Pharo VM for Pharo 7
+- Latest Pharo 10 image
+- Pharo VM for Pharo 10
 
 You can get both by downloading it from the [Pharo](http://pharo.org) site or in the command line with [zeroconf](http://get.pharo.org): 
 
@@ -20,12 +20,14 @@ wget -O- get.pharo.org | bash
 To load the ESUGApp package into the Pharo image:
 
 ```Smalltalk
-Metacello new
- baseline:'ESUGApp';
- repository: 'github://Lin777/Regis:master/src';
- load.
- 
-#ESUGSetUp asClass start
+  Metacello new  
+    baseline: 'ESUGApp';
+    githubUser: 'ESUG' project: 'Regis' commitish: 'master' path: 'src';
+    onWarningLog;
+    onConflictUseLoaded;
+    load.
+
+ESUGSetUp start
 ```
 
 You can see the application run in: http://localhost:8000/ESUG
@@ -34,22 +36,6 @@ Admin credentials:
 
 email: admin@esug.org
 password: 12345678
-
-To load the project in Pharo 10 you can use this script:
-
-```st
-  Metacello new  
-    baseline: 'ESUGApp';
-    githubUser: 'ESUG' project: 'Regis' commitish: 'master' path: 'src';
-    onWarningLog;
-    onConflictUseLoaded;
-    onUpgrade: [ :ex | ex useIncoming ];
-    load: #('Core').
-
-ESUGSetUp start
-```
-
-> This might evolve since I am working to simplify the dependencies management and to migrate the project to Pharo 10. 
 
 ### Testing Data
 
