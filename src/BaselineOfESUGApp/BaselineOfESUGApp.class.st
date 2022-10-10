@@ -47,30 +47,31 @@ BaselineOfESUGApp >> baseline: spec [
 
 { #category : #baselines }
 BaselineOfESUGApp >> setUpDependencies: spec [
-	
+
 	spec baseline: 'Seaside3' with: [ spec repository: 'github://SeasideSt/Seaside:v3.4.x/repository' ].
 
-	spec baseline: 'MaterialDesignLite' with: [ spec repository: 'github://DuneSt/MaterialDesignLite:v2.x.x/src' ].
+	spec baseline: 'MaterialDesignLite' with: [ 
+		spec
+			loads: 'all';
+			repository: 'github://DuneSt/MaterialDesignLite:v2.x.x/src' ].
 
 	spec baseline: 'DatabaseEsug' with: [ spec repository: 'github://ESUG/DatabaseEsug:master/src' ].
 	"loaded in P10. Not a single test! Unbelievable"
-	
-	spec
-		baseline: 'Parasol'
-		with: [ spec
-				loads: 'default';
-				repository: 'github://SeasideSt/Parasol:master/repository' ].
+
+	spec baseline: 'Parasol' with: [ 
+		spec
+			loads: 'default';
+			repository: 'github://SeasideSt/Parasol:master/repository' ].
 	"use default not to load Seaside again"
-	
+
 	spec baseline: 'PSTableSeaside' with: [ spec repository: 'github://ESUG/PSTableSeaside:master/src' ].
-	
+
 	spec baseline: 'NeoJSON' with: [ spec repository: 'github://svenvc/NeoJSON/repository' ].
-	
+
 	spec baseline: 'NeoCSV' with: [ spec repository: 'github://svenvc/NeoCSV/repository' ].
-	
-	spec
-		baseline: 'Artefact'
-		with: [ spec
-				loads: #('default' 'seaside');
-				repository: 'github://pharo-contributions/Artefact:v1.x.x/src' ].
+
+	spec baseline: 'Artefact' with: [ 
+		spec
+			loads: #( 'default' 'seaside' );
+			repository: 'github://pharo-contributions/Artefact:v1.x.x/src' ]
 ]

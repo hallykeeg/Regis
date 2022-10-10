@@ -385,11 +385,6 @@ ESUGSetUp class >> existBackupToRestart [
 	
 ]
 
-{ #category : #installationOfConflictLibraries }
-ESUGSetUp class >> initialize [
-	self installDependencesWithConflicts
-]
-
 { #category : #setUps }
 ESUGSetUp class >> initializeDataFromScratch [
 	| esugConferenceConfiguration entryPoint conference |
@@ -401,30 +396,6 @@ ESUGSetUp class >> initializeDataFromScratch [
 	self configureESUGFeesForConference: conference.
 	self configureESUGReductionCodesForConference: conference.
 	self activateOnlyThisConference: conference
-]
-
-{ #category : #installationOfConflictLibraries }
-ESUGSetUp class >> installDependencesWithConflicts [
-	self installMagritte.
-	self installMDLForMagritte.
-]
-
-{ #category : #installationOfConflictLibraries }
-ESUGSetUp class >> installMDLForMagritte [
-	Metacello new 
-		baseline: 'MaterialDesignLite'; 
-		repository: 'github://Lin777/MaterialDesignLite:master/src';
-		onConflict: [ :ex :a :b | a projectName = b projectName ifTrue: [ a projectSpec isBaselineOfProjectSpec ifTrue: [ ex useLoaded ] ifFalse: [ ex useIncoming ] ] ifFalse: [ ex resume ] ];
-		load: 'all'
-]
-
-{ #category : #installationOfConflictLibraries }
-ESUGSetUp class >> installMagritte [
-	Metacello new
-	baseline: 'Magritte';
-		repository: 'github://magritte-metamodel/magritte:master/source';
-		onConflict: [ :ex :a :b | a projectName = b projectName ifTrue: [ a projectSpec isBaselineOfProjectSpec ifTrue: [ ex useLoaded ] ifFalse: [ ex useIncoming ] ] ifFalse: [ ex resume ] ];
-		load: #('Magritte-Seaside')
 ]
 
 { #category : #backupAndRestoreData }
