@@ -3,18 +3,14 @@ This baseline is used to load a ESUGApp from repository.
 
 Depends on:
 - Seaside3
-- MaterialDesignLite
+- MaterialDesignLite (with Magritte)
 - Parasol
 - NeoJSON
 - NeoCSV
+- Artefact
 
 Load type: 
 - atomic
-
-This file does not load other dependencies because they have a conflicts with others, this dependencies are:
-- Artefact
-- MaterialDesignLite (with extension for Magritte)
-- Magritte
 "
 Class {
 	#name : #BaselineOfESUGApp,

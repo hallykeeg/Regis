@@ -3,11 +3,6 @@ Description
 -------------------------------------
 I am a principal class for page
 
-Examples
---------------------
-
-This class load dependencies with conflicts such as: MaterialDesignLite (magritte) and Magritte.
-
 When execute: 
 
 ESUGSetUp start.
