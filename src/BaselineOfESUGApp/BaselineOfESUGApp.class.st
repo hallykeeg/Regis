@@ -27,11 +27,11 @@ BaselineOfESUGApp >> baseline: spec [
 			self setUpDependencies: spec.
 			spec
 				package: 'ESUGApp-PostMark-Core' with: [ spec requires: #('NeoJSON') ];
-				package: 'ESUGApp-Model' with: [ spec requires: #('DatabaseEsug') ];
+				package: 'ESUGApp-Model' with: [ spec requires: #('DatabaseEsug' 'Artefact') ];
 				package: 'ESUGApp-Controller' with: [ spec requires: #('NeoCSV') ];
 				package: 'ESUGApp-Core' with: [ spec requires: #('ESUGApp-View') ];		
 				package: 'ESUGApp-Library' with: [ spec requires: #('MaterialDesignLite' 'Seaside3' 'ESUGApp-Model') ];
-				package: 'ESUGApp-Form' with: [ spec requires: #('ESUGApp-View' 'Artefact') ];
+				package: 'ESUGApp-Form' with: [ spec requires: #('ESUGApp-View') ];
 				package: 'ESUGApp-Component' with: [ spec requires: #('MaterialDesignLite' 'ESUGApp-Controller') ];
 				package: 'ESUGApp-View' with: [ spec requires: #('ESUGApp-Library' 'ESUGApp-Component' 'PSTableSeaside') ];
 				package: 'ESUGApp-Tests' with: [ spec requires: #('Parasol' 'ESUGApp-Core') ];
@@ -68,6 +68,6 @@ BaselineOfESUGApp >> setUpDependencies: spec [
 
 	spec baseline: 'Artefact' with: [ 
 		spec
-			loads: #( 'default' 'seaside' );
+			loads: #( 'core' );
 			repository: 'github://pharo-contributions/Artefact:v1.x.x/src' ]
 ]
