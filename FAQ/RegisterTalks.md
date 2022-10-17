@@ -1,6 +1,6 @@
 # Register Talks as Attendee
 
-If your want to register an award to the conference you need to have an attendee registered previously. Next, you need to follow the following path:
+If your want to register a talk to the conference you need to have an attendee registered previously. Next, you need to follow the following path:
 
 1. Click on **MY REGISTRATION** option menu.
 
