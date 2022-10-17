@@ -4,7 +4,7 @@ If you want to see the payment information to pay your registration to the confe
 
 ## Show payment information as Group Manager
 
-1. Click in **My Registration** option. You will see a table with all attendees registered, click in **PAYMENT INFORMATION** button (see image below).
+1. Click in **Group management** option. You will see a table with all attendees registered, click in **PAYMENT INFORMATION** button (see image below).
 
 ![Payment information 1](https://github.com/Lin777/Regis/blob/master/FAQ/images/paymentInformation1.png?raw=true)
 
