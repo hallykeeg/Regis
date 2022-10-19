@@ -47,12 +47,11 @@ ERControllerTest >> testCompressFilesToZip [
 	file1 writeStreamDo: [ :stream | stream nextPutAll: 'content of File 1' ].
 	file2 writeStreamDo: [ :stream | stream nextPutAll: 'content of File 2' ].
 	codingResult := controller codingZipFile: nameZipFile with: nameSubDir.
-	self assert: (codingResult isString and: [codingResult isNotEmpty]).
+	self assert: (codingResult isString and: [ codingResult isNotEmpty ]).
 	"After to get the Base64 coding of zipFile, the files created are cleaned"
-	self deny: (nameZipFile, '.zip') asFileReference exists.
+	self deny: (nameZipFile , '.zip') asFileReference exists.
 	self deny: file1 exists.
-	self deny: file2 exists.
-	
+	self deny: file2 exists
 ]
 
 { #category : #tests }
