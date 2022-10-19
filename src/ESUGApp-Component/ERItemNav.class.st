@@ -36,6 +36,14 @@ ERItemNav >> evaluateCallBackBlock [
 ]
 
 { #category : #action }
+ERItemNav >> getCallback [ 
+	self iAmClicked.
+	self evaluateCallBackBlock.
+	 
+	
+]
+
+{ #category : #action }
 ERItemNav >> iAmClicked [
 	self session activeMenu:  label,'-option'.
 ]
