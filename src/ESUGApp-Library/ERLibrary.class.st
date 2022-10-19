@@ -159,7 +159,12 @@ html, body {
   background-color: #0b7bfc;
   color: white;
 }
-
+.active-menu-option{
+  background-color: #0b7bfc;
+  border-left: 8px white solid;
+  font-weight:bold;
+  color: white;
+}
 .demo-navigation .mdl-navigation__link .material-icons {
   font-size: 24px;
   color: white;

@@ -9,10 +9,23 @@ Class {
 	#superclass : #WASession,
 	#instVars : [
 		'user',
-		'account'
+		'account',
+		'activeMenuId'
 	],
 	#category : #'ESUGApp-Core'
 }
+
+{ #category : #accessing }
+ERSession >> activeMenu [
+	"Get the id of current selected menu item in navbar"
+	^ activeMenuId .
+]
+
+{ #category : #accessing }
+ERSession >> activeMenu:id [
+	"Set the id of current selected menu item in navbar"
+	 activeMenuId :=id.
+]
 
 { #category : #intialization }
 ERSession >> initialize [
@@ -33,6 +46,7 @@ ERSession >> login: aUser [
 { #category : #actions }
 ERSession >> logout [
 	self user: nil.
+	self activeMenu: nil.
 	self unregister
 ]
 

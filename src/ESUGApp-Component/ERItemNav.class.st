@@ -30,9 +30,24 @@ ERItemNav >> callback: anObject [
 	callback := anObject
 ]
 
+{ #category : #action }
+ERItemNav >> evaluateCallBackBlock [
+	callback value value.
+]
+
+{ #category : #action }
+ERItemNav >> iAmClicked [
+	self session activeMenu:  label,'-option'.
+]
+
 { #category : #accessing }
 ERItemNav >> icon: anObject [
 	icon := anObject
+]
+
+{ #category : #accessing }
+ERItemNav >> isCurrentlyActive [ 
+	^ self session activeMenu =  (label,'-option').
 ]
 
 { #category : #accessing }
@@ -44,7 +59,8 @@ ERItemNav >> label: anObject [
 ERItemNav >> renderContentOn: html [
 	html mdlNavigationLink
 		id: label,'-option';
-		callback: callback;
+		callback: [self getCallback ];
+		class: 'active-menu-option' if: (self isCurrentlyActive );
 		with: [ 
 			html mdlIcon
 				class: 'mdl-color-text--white';
