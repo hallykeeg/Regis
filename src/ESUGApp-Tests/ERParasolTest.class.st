@@ -10,7 +10,7 @@ Class {
 
 { #category : #accessing }
 ERParasolTest class >> defaultTimeLimit [
-	^ 30 seconds
+	^ 1 minute
 ]
 
 { #category : #accessing }
