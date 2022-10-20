@@ -56,6 +56,11 @@ ERSession >> logout [
 	self unregister
 ]
 
+{ #category : #actions }
+ERSession >> setDefaultMenu [
+	self activeMenu:self defaultMenu .
+]
+
 { #category : #updating }
 ERSession >> updateRoot: anHtmlRoot [
 	super updateRoot: anHtmlRoot.
