@@ -27,9 +27,15 @@ ERSession >> activeMenu:id [
 	 activeMenuId :=id.
 ]
 
+{ #category : #accessing }
+ERSession >> defaultMenu [
+	^ 'Home-option'.
+]
+
 { #category : #intialization }
 ERSession >> initialize [
 	super initialize.
+	self setDefaultMenu.
 ]
 
 { #category : #actions }
