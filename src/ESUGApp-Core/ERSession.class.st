@@ -52,7 +52,7 @@ ERSession >> login: aUser [
 { #category : #actions }
 ERSession >> logout [
 	self user: nil.
-	self activeMenu: nil.
+	self activeMenu: ''.
 	self unregister
 ]
 
