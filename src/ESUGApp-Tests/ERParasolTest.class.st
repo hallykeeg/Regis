@@ -9,6 +9,11 @@ Class {
 }
 
 { #category : #accessing }
+ERParasolTest class >> defaultTimeLimit [
+	^ 1 minute
+]
+
+{ #category : #accessing }
 ERParasolTest >> baseURL [
 	"URL of ESUG App"
 
