@@ -8,7 +8,7 @@ SmalltalkCISpec {
     }
   ],
   #testing : {
-    #defaultTimeout : 30
+    #defaultTimeout : 60
   }
 }
 

@@ -33,7 +33,7 @@ ERInvoiceMailSender >> attendee: anAttendee [
 ERInvoiceMailSender >> getInvoiceAsStreamOf: user [
 	|file stream|
 	file := ERPDFInvoice pdfDocOf: user.
-	stream := (RWBinaryOrTextStream on: String new) binary.
+	stream := (FileSystem memory / 'doc.pdf') binaryWriteStream.
 	file exportTo: stream.
 	^ stream close.
 ]

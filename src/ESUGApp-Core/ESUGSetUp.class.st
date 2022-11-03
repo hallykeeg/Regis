@@ -325,16 +325,17 @@ ESUGSetUp class >> createBankAccountInformation [
 
 { #category : #conferenceConfiguration }
 ESUGSetUp class >> createESUGConfiguration [
+
 	^ ERConferenceConfigurationModel new
-		organizer: self createEsugConferenceOrganizer;
-		name: 'ESUG';
-		description: 'ESUG International Smalltalk Conference';
-		homePageUrl: 'http://www.esug.org/wiki/pier/Conferences/2018/';
-		dateFrom: '10/10/2020';
-		dateTo: '10/14/2020';
-		dateSubmissionDeadline:  '10/14/2020';
-		earlyRegistrationDeadline: '09/25/2020';
-		emailConfiguration: self createEsugEmailConfiguration
+		  organizer: self createEsugConferenceOrganizer;
+		  name: 'ESUG';
+		  description: 'ESUG International Smalltalk Conference';
+		  homePageUrl: 'http://www.esug.org/wiki/pier/Conferences/2018/';
+		  dateFrom: '10/10/2023';
+		  dateTo: '10/14/2023';
+		  dateSubmissionDeadline: '10/14/2023';
+		  earlyRegistrationDeadline: '09/25/2023';
+		  emailConfiguration: self createEsugEmailConfiguration
 ]
 
 { #category : #conferenceConfiguration }

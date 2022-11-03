@@ -35,5 +35,5 @@ jobs:
       - name: Run tests
         run: smalltalkci -s ${{ matrix.smalltalk }}
         shell: bash
-        timeout-minutes: 20
+        timeout-minutes: 30
 
