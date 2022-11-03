@@ -69,16 +69,20 @@ ERTable >> render: html with: aObject [
 { #category : #rendering }
 ERTable >> renderButton: html with: aObject [
 	listToRenderButton
-		do: [ :dataButton | 
+		do: [ :dataButton | | classBtn |
+			classBtn := dataButton at:7 ifAbsent: [[ :item | '' ] ].
+			 
 			html mdlAnchorButton colored; rippleEffect;
 				id: (dataButton third value: aObject);
+				class:  (classBtn value:aObject) ;
 				onClick: dataButton fifth;
 				disabled: (dataButton sixth ifTrue: 'disabled');
 				callback: [ dataButton second value: aObject ];
-				icon: dataButton first.
+				icon: ( dataButton first isBlock ifTrue: [dataButton first value:aObject ] ifFalse: dataButton first ).
 			html div	class: 'mdl-tooltip'; 
 				attributeAt: 'data-mdl-for' put: (dataButton third value: aObject);
-				with: dataButton fourth ].
+				with: ( dataButton fourth isBlock ifTrue: [dataButton fourth value:aObject ] ifFalse: dataButton fourth ).
+				 ].
 	self renderDownloadButton: html with: aObject
 ]
 

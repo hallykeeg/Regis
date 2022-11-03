@@ -14,7 +14,9 @@ Class {
 		'presentation',
 		'authorsWithoutSubmitter',
 		'submittionDate',
-		'bio'
+		'bio',
+		'accepted',
+		'acceptanceDetails'
 	],
 	#category : #'ESUGApp-Model-Magritte'
 }
@@ -24,6 +26,27 @@ ERTalk class >> submitter: anAttendee [
 	^ self new 
 		submitter: anAttendee; 
 		yourself 
+]
+
+{ #category : #accessing }
+ERTalk >> acceptanceBtnIcon [
+	accepted ifNil: [ accepted :=false ].
+	^ accepted ifTrue: [self cancelBtnIconName ] ifFalse:[self checkBtnIconName ]  .
+]
+
+{ #category : #accessing }
+ERTalk >> acceptanceDetails [  
+	^ acceptanceDetails.
+]
+
+{ #category : #accessing }
+ERTalk >> acceptanceDetails:aString [  
+	 acceptanceDetails := aString.
+]
+
+{ #category : #accessing }
+ERTalk >> accepted [
+	^ accepted .
 ]
 
 { #category : #accessing }
@@ -44,6 +67,21 @@ ERTalk >> bio [
 { #category : #accessing }
 ERTalk >> bio: anObject [
 	bio := anObject
+]
+
+{ #category : #accessing }
+ERTalk >> cancelBtnIconName [
+	^ 'cancel' .
+]
+
+{ #category : #accessing }
+ERTalk >> checkBtnIconName [
+	^ 'check' .
+]
+
+{ #category : #accessing }
+ERTalk >> deleteBtnIcon [
+	^ 'delete'.
 ]
 
 { #category : #accessing }
@@ -136,6 +174,34 @@ ERTalk >> descriptionTitle [
 ]
 
 { #category : #accessing }
+ERTalk >> discardAcceptance [
+	^ accepted := false.
+]
+
+{ #category : #accessing }
+ERTalk >> displayStatusClass [
+	self accepted ifTrue: [ ^ 'hide-btn' ] ifFalse: [ ^ '' ].
+]
+
+{ #category : #accessing }
+ERTalk >> displayStatusClassInfoBtn [
+	self accepted ifTrue: [ ^ '' ] ifFalse: [ ^ 'hide-btn' ].
+]
+
+{ #category : #accessing }
+ERTalk >> initialize [ 
+	 super initialize .
+	accepted := false.
+	acceptanceDetails := ''.
+]
+
+{ #category : #accessing }
+ERTalk >> labelAcceptanceBtnIcon [
+	accepted ifNil: [ accepted :=false ].
+	^ accepted ifTrue: ['Cancel talk acceptance' ] ifFalse:[ 'Accept talk']  .
+]
+
+{ #category : #accessing }
 ERTalk >> presentation [
 	^ presentation
 ]
@@ -178,6 +244,18 @@ ERTalk >> title [
 { #category : #accessing }
 ERTalk >> title: anObject [
 	title := anObject
+]
+
+{ #category : #accessing }
+ERTalk >> toggleAcceptance [
+	accepted := accepted not.
+	self updateDetails.
+	^ accepted .
+]
+
+{ #category : #accessing }
+ERTalk >> updateDetails [
+	acceptanceDetails := ' Accepté le ', DateAndTime now asString .
 ]
 
 { #category : #accessing }

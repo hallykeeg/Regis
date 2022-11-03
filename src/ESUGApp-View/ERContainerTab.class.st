@@ -317,6 +317,11 @@ ERContainerTab >> renderContentOn: html [
 ]
 
 { #category : #updating }
+ERContainerTab >> toggleTalkAcceptance:  aTalk [
+	controller toggleTalkAcceptance: aTalk
+]
+
+{ #category : #updating }
 ERContainerTab >> updateAffiliation: aff on: aGroup [
 	controller updateAffiliation: aff on: aGroup.
 	self cancel.

@@ -170,7 +170,9 @@ html, body {
   color: white;
   margin-right: 32px;
 }
-
+.hide-btn{
+	display:none;
+}
 @media (max-width: 800px) and (min-width: 300px) {
 	#card-heading{
 		text-align: center;

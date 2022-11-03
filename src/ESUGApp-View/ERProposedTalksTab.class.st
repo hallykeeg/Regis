@@ -44,28 +44,49 @@ ERProposedTalksTab >> initializeFormAddTalk [
 
 { #category : #tableBlock }
 ERProposedTalksTab >> listDataToRenderButton [
-	| list |
+	| list attributesTab|
 	list := OrderedCollection new.
-	self proposalsAreAllowed ifTrue: [ 
-		list add:
-			(Array
-				with: 'edit'
-				with: [ :talk | self modifyTalk: talk.
-					self updateStateTab: self tabName. ]
-				with: [ :talk | talk id , '-modify' ]
-				with: 'Modify'
-				with: ''
-				with: false);
-		add:
-			(Array
-				with: 'delete'
-				with: [ :talk | self deleteTalk: talk.
-					self updateStateTab: self tabName. ]
-				with: [ :talk | talk id , '-delete' ]
-				with: 'Delete'
-				with: 'return confirm(''Are you sure you want to delete this item?'');'
-				with: false) ].
+	attributesTab := Array new: 7.
+	
+	self proposalsAreAllowed ifTrue: [
+			attributesTab
+				at:1 put: 'edit';
+				at:2 put: [ :talk | self modifyTalk: talk.
+					self updateStateTab: self tabName. ];
+				at:3 put: [ :talk | talk id , '-modify' ];
+				at:4 put: 'Modify';
+				at:5 put: '';
+				at:6 put: false;
+			   at:7 put: [ :talk | talk displayStatusClass ] .
+				list add: attributesTab.
+				
+		 		attributesTab := Array new: 7.
+				
+			 	attributesTab
+				at:1 put: 'delete';
+				at:2 put: [ :talk | self deleteTalk: talk.
+					self updateStateTab: self tabName. ];
+				at:3 put: [ :talk | talk id , '-delete' ] ;
+				at:4 put: 'Delete';
+				at:5 put: 'return confirm(''Are you sure you want to delete this item?'');';
+				at:6 put: false;
+				at:7 put: [ :talk | talk displayStatusClass ] .
+				
+				list add:attributesTab. 
+				attributesTab := Array new: 7.
+				
+			   attributesTab 
+				at:1 put:  'info';
+				at:2 put: [ :talk | ];
+				at:3 put: [ :talk | talk id , '-info' ];
+				at:4 put: [ :talk | talk acceptanceDetails ];
+				at:5 put: '';
+				at:6 put: false;
+				at:7 put: [ :talk | talk displayStatusClassInfoBtn ] .
+				list add:attributesTab.
 		^ list
+		] .
+	  ^list.
 ]
 
 { #category : #updating }

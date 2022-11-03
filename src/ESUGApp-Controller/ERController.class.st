@@ -171,6 +171,13 @@ ERController >> stateUpdatePaidAttendee: anAttendee with: aBoolean [
 	self notifyAllObservers
 ]
 
+{ #category : #action }
+ERController >> toggleTalkAcceptance: aTalk [
+
+	conference toggleTalkAcceptance: aTalk.
+	self notifyAllObservers
+]
+
 { #category : #updating }
 ERController >> updateAffiliation: aff on: aGroup [
 	aGroup affiliationInformation: aff.

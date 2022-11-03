@@ -809,6 +809,13 @@ ERConference >> sumEachRowOf: aList [
 	^ aList
 ]
 
+{ #category : #action }
+ERConference >> toggleTalkAcceptance: aTalk [
+	"Toggle the acceptance status of a proposed talk"
+	(self submittedTalks detect: [ :each | aTalk id = each id ] ) toggleAcceptance.
+	self save.
+]
+
 { #category : #accessing }
 ERConference >> users [
 	^ users

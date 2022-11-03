@@ -12,6 +12,23 @@ Class {
 	#category : #'ESUGApp-View-Tab'
 }
 
+{ #category : #rendering }
+ERTalksTab >> defaultButtons [
+	"Render default buttons for talks"
+
+	^ OrderedCollection new
+		add:
+			(Array
+				with: [  :talk| talk deleteBtnIcon ]
+				with: [ :talk | self deleteTalk: talk.
+					self updateStateTab: self tabName. ]
+				with: [ :talk | talk id , '-delete' ]
+				with: 'Delete Talk'
+				with: 'return confirm(''Are you sure you want to delete this talk?'');'
+				with: false);
+		yourself
+]
+
 { #category : #actions }
 ERTalksTab >> exportTalks [
 	"Export Talks to csv file"
@@ -31,16 +48,18 @@ ERTalksTab >> headers [
 { #category : #rendering }
 ERTalksTab >> listDataToRenderButton [
 	"Render buttons of talks"
-
-	^ OrderedCollection new
-		add:
+	|collection|
+	collection := self defaultButtons.
+	self session user isAdmin ifFalse:[^ collection ]. 
+	^  collection
+		addFirst:
 			(Array
-				with: 'delete'
-				with: [ :talk | self deleteTalk: talk.
+				with: [  :talk | talk acceptanceBtnIcon ]
+				with: [ :talk | self toggleTalkAcceptance: talk.
 					self updateStateTab: self tabName. ]
-				with: [ :talk | talk id , '-delete' ]
-				with: 'Delete Talk'
-				with: 'return confirm(''Are you sure you want to delete this talk?'');'
+				with: [ :talk | talk id , '-accept' ]
+				with: [  :talk | talk labelAcceptanceBtnIcon ]  
+				with: 'return confirm(''Are you sure you want to accept this talk?'');'
 				with: false);
 		yourself
 ]
