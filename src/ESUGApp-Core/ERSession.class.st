@@ -9,14 +9,33 @@ Class {
 	#superclass : #WASession,
 	#instVars : [
 		'user',
-		'account'
+		'account',
+		'activeMenuId'
 	],
 	#category : #'ESUGApp-Core'
 }
 
+{ #category : #accessing }
+ERSession >> activeMenu [
+	"Get the id of current selected menu item in navbar"
+	^ activeMenuId .
+]
+
+{ #category : #accessing }
+ERSession >> activeMenu:id [
+	"Set the id of current selected menu item in navbar"
+	 activeMenuId :=id.
+]
+
+{ #category : #accessing }
+ERSession >> defaultMenu [
+	^ 'Home-option'.
+]
+
 { #category : #intialization }
 ERSession >> initialize [
 	super initialize.
+	self setDefaultMenu.
 ]
 
 { #category : #actions }
@@ -33,7 +52,13 @@ ERSession >> login: aUser [
 { #category : #actions }
 ERSession >> logout [
 	self user: nil.
+	self activeMenu: ''.
 	self unregister
+]
+
+{ #category : #actions }
+ERSession >> setDefaultMenu [
+	self activeMenu:self defaultMenu .
 ]
 
 { #category : #updating }

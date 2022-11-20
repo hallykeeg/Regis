@@ -82,6 +82,7 @@ ERLoggedPage >> initialize [
 	(ERHomeView
 				withContent: content
 				withController: pageController).
+	self session setDefaultMenu.
 	self initializeNabvar.
 ]
 
