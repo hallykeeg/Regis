@@ -10,7 +10,9 @@ Class {
 	#instVars : [
 		'callback',
 		'icon',
-		'label'
+		'label',
+		'hasNotif',
+		'notifCount'
 	],
 	#category : #'ESUGApp-Component'
 }
@@ -63,6 +65,17 @@ ERItemNav >> label: anObject [
 	label := anObject
 ]
 
+{ #category : #accessing }
+ERItemNav >> notifCount [  
+	^	notifCount.
+]
+
+{ #category : #accessing }
+ERItemNav >> notifCount: aNumber [ 
+	notifCount:=aNumber.
+	aNumber > 0 ifTrue: [ self activateNotif ] ifFalse: [ self desactivateNotif  ]
+]
+
 { #category : #rendering }
 ERItemNav >> renderContentOn: html [
 	html mdlNavigationLink
@@ -73,5 +86,15 @@ ERItemNav >> renderContentOn: html [
 			html mdlIcon
 				class: 'mdl-color-text--white';
 				with: [ html text: icon ].
-				html text:  label . ]
+				html text:  label . 
+				self setBadge:html.
+				]
+]
+
+{ #category : #accessing }
+ERItemNav >> setBadge:html [
+	|notifs|
+	notifs:= self notifCount.
+	(notifs > 0 ) ifTrue: [ html mdlBadge dataBadge: notifs; title: notifs asString,' unaccepted talks.'. ]
+	
 ]

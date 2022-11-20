@@ -107,10 +107,24 @@ ERMenuFactory >> createPaymentItem [
 
 { #category : #factory }
 ERMenuFactory >> createProposalsItem [
-	^ ERItemNav
+ |proposalItem|
+ proposalItem:= ERItemNav
 		label: 'Proposals'
 		icon: 'note'
-		callback: (availableItemsOfMenu at: 'proposal')
+		callback: (availableItemsOfMenu at: 'proposal').
+	proposalItem activateNotif.
+	^ proposalItem.
+]
+
+{ #category : #factory }
+ERMenuFactory >> createProposalsItemWith:aController [
+ |proposalItem|
+ proposalItem:= ERItemNav
+		label: 'Proposals'
+		icon: 'note'
+		callback: (availableItemsOfMenu at: 'proposal').
+	proposalItem notifCount: (aController conference numberOfNonAcceptedTalks).
+	^ proposalItem.
 ]
 
 { #category : #factory }

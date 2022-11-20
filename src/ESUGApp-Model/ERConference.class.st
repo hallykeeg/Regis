@@ -611,6 +611,11 @@ ERConference >> isEarlyRegistrationOf: anAttendee [
 		asDate > anAttendee createdOn asDate
 ]
 
+{ #category : #accessing }
+ERConference >> numberOfNonAcceptedTalks [
+	^ submittedTalks count:  [ :talk |  talk accepted not ] .
+]
+
 { #category : #action }
 ERConference >> openRegistration [
 	self configuration openRegistration: true.

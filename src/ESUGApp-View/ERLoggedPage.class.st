@@ -164,7 +164,7 @@ ERLoggedPage >> listOptionsFor: aMenuFactory [
 			list add: aMenuFactory createUsersItem.
 			list add: aMenuFactory createConferenceItem.
 			list add: aMenuFactory createPaymentItem.
-			list add: aMenuFactory createProposalsItem.
+			list add: (aMenuFactory createProposalsItemWith: pageController).
 			list add: aMenuFactory createStatisticsItem. ].
 	self session user isStudent
 		ifTrue: [ list add: aMenuFactory createStudentVolunterSearch ].
