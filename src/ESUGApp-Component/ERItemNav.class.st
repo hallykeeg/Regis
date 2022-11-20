@@ -27,9 +27,19 @@ ERItemNav class >> label: aString icon: anIcon callback: aBlock [
 	^ instance 
 ]
 
+{ #category : #action }
+ERItemNav >> activateNotif [ 
+	hasNotif:=true.
+]
+
 { #category : #accessing }
 ERItemNav >> callback: anObject [
 	callback := anObject
+]
+
+{ #category : #action }
+ERItemNav >> desactivateNotif [ 
+	hasNotif:=false.
 ]
 
 { #category : #action }
@@ -53,6 +63,13 @@ ERItemNav >> iAmClicked [
 { #category : #accessing }
 ERItemNav >> icon: anObject [
 	icon := anObject
+]
+
+{ #category : #initialization }
+ERItemNav >> initialize [  
+	super initialize .
+	hasNotif := false.
+	notifCount := 0.
 ]
 
 { #category : #accessing }
