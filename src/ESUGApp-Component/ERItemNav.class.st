@@ -110,8 +110,6 @@ ERItemNav >> renderContentOn: html [
 
 { #category : #accessing }
 ERItemNav >> setBadge:html [
-	|notifs|
-	notifs:= self notifCount.
-	(notifs > 0 ) ifTrue: [ html mdlBadge dataBadge: notifs; title: notifs asString,' unaccepted talks.'. ]
+	(self notifCount > 0 ) ifTrue: [ html mdlBadge dataBadge: notifs; title: notifs asString,' unaccepted talks.'. ]
 	
 ]
