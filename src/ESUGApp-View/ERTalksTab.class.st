@@ -59,7 +59,7 @@ ERTalksTab >> listDataToRenderButton [
 					self updateStateTab: self tabName. ]
 				with: [ :talk | talk id , '-accept' ]
 				with: [  :talk | talk labelAcceptanceBtnIcon ]  
-				with: 'return confirm(''Are you sure you want to accept this talk?'');'
+				with: 'return confirm(''Are you sure you want to change the acceptance of this talk?'');'
 				with: false);
 		yourself
 ]

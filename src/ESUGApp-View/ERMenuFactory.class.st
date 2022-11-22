@@ -107,22 +107,23 @@ ERMenuFactory >> createPaymentItem [
 
 { #category : #factory }
 ERMenuFactory >> createProposalsItem [
+"Create proposal item without notification badge"
+ ^ ERItemNav
+		label: 'Proposals'
+		icon: 'note'
+		callback: (availableItemsOfMenu at: 'proposal').
+	 
+]
+
+{ #category : #factory }
+ERMenuFactory >> createProposalsItemWith:aController [
+"Create proposal item and set the number of unaccepted talks as a notif badge"
  |proposalItem|
  proposalItem:= ERItemNav
 		label: 'Proposals'
 		icon: 'note'
 		callback: (availableItemsOfMenu at: 'proposal').
 	proposalItem activateNotif.
-	^ proposalItem.
-]
-
-{ #category : #factory }
-ERMenuFactory >> createProposalsItemWith:aController [
- |proposalItem|
- proposalItem:= ERItemNav
-		label: 'Proposals'
-		icon: 'note'
-		callback: (availableItemsOfMenu at: 'proposal').
 	proposalItem notifCount: (aController conference numberOfNonAcceptedTalks).
 	^ proposalItem.
 ]

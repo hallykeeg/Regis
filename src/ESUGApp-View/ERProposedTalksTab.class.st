@@ -84,7 +84,6 @@ ERProposedTalksTab >> listDataToRenderButton [
 				at:6 put: false;
 				at:7 put: [ :talk | talk displayStatusClassInfoBtn ] .
 				list add:attributesTab.
-		^ list
 		] .
 	  ^list.
 ]

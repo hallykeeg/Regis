@@ -55,6 +55,11 @@ ERItemNav >> getCallback [
 	
 ]
 
+{ #category : #accessing }
+ERItemNav >> hasNotif [ 
+	^ hasNotif .
+]
+
 { #category : #action }
 ERItemNav >> iAmClicked [
 	self session activeMenu:  label,'-option'.
@@ -90,7 +95,6 @@ ERItemNav >> notifCount [
 { #category : #accessing }
 ERItemNav >> notifCount: aNumber [ 
 	notifCount:=aNumber.
-	aNumber > 0 ifTrue: [ self activateNotif ] ifFalse: [ self desactivateNotif  ]
 ]
 
 { #category : #rendering }
@@ -110,6 +114,10 @@ ERItemNav >> renderContentOn: html [
 
 { #category : #accessing }
 ERItemNav >> setBadge:html [
-	(self notifCount > 0 ) ifTrue: [ html mdlBadge dataBadge: notifs; title: notifs asString,' unaccepted talks.'. ]
+	|notifs|
+	notifs := self notifCount.
+	(self hasNotif and: (notifs > 0 ) ) 
+	ifTrue: [ html mdlBadge dataBadge: notifs ; 
+				title: notifs asString,' unaccepted talk(s).'. ]
 	
 ]
