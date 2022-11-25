@@ -180,7 +180,7 @@ ERTalk >> discardAcceptance [
 
 { #category : #accessing }
 ERTalk >> displayStatusClass [
-	self accepted ifTrue: [ ^ 'hide-btn' ] ifFalse: [ ^ '' ].
+	^ self accepted ifTrue: [ 'hide-btn' ] ifFalse: [ '' ]
 ]
 
 { #category : #accessing }
