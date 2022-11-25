@@ -185,7 +185,7 @@ ERTalk >> displayStatusClass [
 
 { #category : #accessing }
 ERTalk >> displayStatusClassInfoBtn [
-	self accepted ifTrue: [ ^ '' ] ifFalse: [ ^ 'hide-btn' ].
+	^ self accepted ifTrue: [ '' ] ifFalse: [ 'hide-btn' ]
 ]
 
 { #category : #accessing }
